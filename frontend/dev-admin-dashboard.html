@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduConnectZA - Dev Admin Console | Full System Oversight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="src/css/dev-shell.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+    * { font-family: 'Outfit', sans-serif; }
+    /* Overrides for specific page needs if any */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 antialiased">
+
+  <!-- MAIN ADMIN NAVBAR (Global) -->
+  <nav class="gradient-bg text-white shadow-xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-20 items-center">
+        <div class="flex items-center space-x-3">
+          <div class="bg-white p-2 rounded-xl shadow-inner">
+            <i class="fas fa-chalkboard-user text-blue-800 text-xl"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-bold text-xl tracking-tight leading-none">EduConnectZA</span>
+            <span class="text-[10px] uppercase tracking-[0.2em] font-semibold text-blue-200 mt-1">Super Admin • Full Control</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="hidden md:flex items-center px-3 py-1 bg-blue-800/50 rounded-full text-xs text-blue-100 border border-blue-700">
+            <span class="h-2 w-2 bg-emerald-400 rounded-full mr-2 animate-pulse"></span>
+            Live Cluster: ZA-CPT-01
+          </div>
+          <button id="logout-btn" class="bg-white/10 hover:bg-white/20 border border-white/20 px-5 py-2 rounded-xl text-sm font-semibold transition-all flex items-center">
+            <i class="fas fa-sign-out-alt mr-2"></i> Log Out
+          </button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    
+    <!-- GLOBAL TABS -->
+    <div class="global-tab-bar mb-8">
+      <a href="dev-admin-dashboard.html" class="global-tab active"><i class="fas fa-th-large"></i> Overview</a>
+      <a href="dev-user-management.html" class="global-tab"><i class="fas fa-users"></i> Users</a>
+      <a href="dev-school-management.html" class="global-tab"><i class="fas fa-school"></i> Schools</a>
+      <a href="dev-ai-insights.html" class="global-tab"><i class="fas fa-brain"></i> AI Audit</a>
+      <a href="dev-system-controls.html" class="global-tab"><i class="fas fa-server"></i> System</a>
+      <a href="dev-content-management.html" class="global-tab"><i class="fas fa-book"></i> Content</a>
+      <a href="dev-database-explorer.html" class="global-tab"><i class="fas fa-database"></i> Database</a>
+    </div>
+
+    <!-- Header + quick actions -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight">⚙️ Technical Control Hub</h1>
+        <p class="text-slate-500 mt-1">Real‑time health, school branding, and performance telemetry.</p>
+      </div>
+      <div class="flex gap-3">
+        <button id="refreshAllBtn" class="bg-white text-slate-700 border border-slate-200 px-6 py-3 rounded-2xl text-sm font-bold hover:bg-slate-50 transition shadow-sm flex items-center gap-2">
+          <i class="fas fa-sync"></i> Sync Cluster State
+        </button>
+      </div>
+    </div>
+
+    <!-- TAB NAVIGATION (Sub-tabs) -->
+    <div class="flex space-x-1 bg-slate-200/50 p-1 rounded-2xl mb-8 w-fit">
+      <button data-tab="overview" class="tab-btn py-3 px-8 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 bg-white shadow-sm text-blue-600">
+        <i class="fas fa-chart-pie"></i> Metrics Overview
+      </button>
+      <button data-tab="schools" class="tab-btn py-3 px-8 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700">
+        <i class="fas fa-school"></i> Schools
+      </button>
+      <a href="branding-studio.html" class="tab-btn py-3 px-8 rounded-xl text-sm font-bold transition-all flex items-center justify-center gap-2 text-slate-500 hover:text-slate-700">
+        <i class="fas fa-palette"></i> Branding Studio
+      </a>
+    </div>
+
+    <!-- OVERVIEW TAB -->
+    <div id="overview-panel" class="tab-panel space-y-8 animate-fade-in">
+      <!-- STATS CARDS -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="stat-card bg-white/70 backdrop-blur-sm p-6 rounded-3xl shadow-sm border border-slate-100">
+          <div class="flex items-center justify-between mb-3"><div class="p-3 bg-blue-100 text-blue-600 rounded-2xl"><i class="fas fa-users text-xl"></i></div><span id="userGrowth" class="text-green-600 text-xs font-bold bg-green-100 px-2 py-1 rounded-full">+0%</span></div>
+          <h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Users</h3>
+          <p id="totalUsers" class="text-3xl font-bold text-slate-900 mt-1">...</p>
+        </div>
+        <div class="stat-card bg-white/70 backdrop-blur-sm p-6 rounded-3xl shadow-sm"><div class="flex items-center justify-between mb-3"><div class="p-3 bg-purple-100 text-purple-600 rounded-2xl"><i class="fas fa-school text-xl"></i></div><span id="schoolGrowth" class="text-blue-600 text-xs font-bold bg-blue-100 px-2 py-1 rounded-full">+0</span></div><h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Registered Schools</h3><p id="totalSchools" class="text-3xl font-bold text-slate-900 mt-1">...</p></div>
+        <div class="stat-card bg-white/70 backdrop-blur-sm p-6 rounded-3xl shadow-sm"><div class="flex items-center justify-between mb-3"><div class="p-3 bg-amber-100 text-amber-600 rounded-2xl"><i class="fas fa-cloud-upload-alt text-xl"></i></div><span class="text-slate-500 text-xs font-bold bg-slate-100 px-2 py-1 rounded-full">Queue: 0</span></div><h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Sync Backlog</h3><p class="text-3xl font-bold text-slate-900 mt-1">0 ms</p></div>
+        <div class="stat-card bg-white/70 backdrop-blur-sm p-6 rounded-3xl shadow-sm"><div class="flex items-center justify-between mb-3"><div class="p-3 bg-emerald-100 text-emerald-600 rounded-2xl"><i class="fas fa-shield-alt text-xl"></i></div><div class="flex items-center gap-1"><span class="relative flex h-3 w-3"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span><span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span></span><span class="text-emerald-700 text-xs font-bold ml-1">99.9%</span></div></div><h3 class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Uptime / ThreatScore</h3><p class="text-3xl font-bold text-slate-900 mt-1">A+ Secure</p></div>
+      </div>
+
+      <!-- AI & SECURITY OVERVIEW -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- AI SYSTEM AUDIT WIDGET -->
+        <div class="lg:col-span-1 bg-indigo-900 text-white rounded-[2rem] p-8 shadow-xl shadow-indigo-200 relative overflow-hidden group">
+          <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-125 transition-transform">
+            <i class="fas fa-brain text-8xl"></i>
+          </div>
+          <h3 class="text-xl font-bold mb-2">AI System Auditor</h3>
+          <p class="text-indigo-200 text-sm mb-6">Continuous database integrity & performance scanning.</p>
+          
+          <div class="space-y-4 mb-8">
+            <div class="flex justify-between items-center bg-white/10 p-3 rounded-2xl">
+              <span class="text-xs font-bold uppercase tracking-widest text-indigo-300">Health Score</span>
+              <span id="aiHealthScore" class="text-2xl font-black text-emerald-400">--</span>
+            </div>
+          </div>
+          
+          <a href="dev-ai-insights.html" class="block w-full bg-white text-indigo-900 text-center py-3 rounded-xl font-bold hover:bg-indigo-50 transition">View Full Report</a>
+        </div>
+
+        <!-- ADVANCED SYSTEM MONITORING & AI / SECURITY GRID (Remaining 2 cols) -->
+        <div class="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- AI Model Performance Logs -->
+          <div class="bg-white/90 rounded-2xl shadow-sm border p-5"><div class="flex items-center justify-between mb-3"><h3 class="font-bold"><i class="fas fa-brain text-purple-500 mr-2"></i>AI Marking Engine</h3><span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Live</span></div><div class="space-y-2 text-sm"><div class="flex justify-between"><span>Essay scoring accuracy</span><span class="font-mono font-bold">94.3%</span></div><div class="flex justify-between"><span>Recommendation CTR</span><span>+28% vs prior</span></div><div class="flex justify-between"><span>Latency (p99)</span><span>212ms</span></div></div></div>
+          <!-- Threat Detection Alerts -->
+          <div class="bg-white/90 rounded-2xl shadow-sm border p-5"><div class="flex items-center gap-2 mb-2"><i class="fas fa-bell text-red-500 animate-pulse"></i><h3 class="font-bold">Threat Detection</h3><span class="bg-red-100 text-red-700 text-[10px] px-2 py-0.5 rounded-full">2 active</span></div><div class="space-y-2 text-sm"><div class="flex items-center gap-2"><i class="fas fa-exclamation-triangle text-amber-500 text-xs"></i><span class="text-xs truncate">Suspicious login from JHB cluster</span></div><div class="flex items-center gap-2"><i class="fas fa-ban text-red-400 text-xs"></i><span class="text-xs">API spike +870% mitigated</span></div></div></div>
+        </div>
+      </div>
+    </div>
+    <!-- SCHOOLS TAB (Verification Only) -->
+    <div id="schools-panel" class="tab-panel hidden space-y-8 animate-fade-in">
+      <div class="max-w-2xl mx-auto">
+        <!-- School Verification -->
+        <div class="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+            <div><i class="fas fa-check-double text-indigo-500 mr-2"></i><span class="font-bold text-slate-800">Registration Requests</span></div>
+          </div>
+          <div class="p-6">
+            <div id="pendingSchoolsList" class="space-y-3">
+              <div class="text-center py-4 text-slate-400 text-sm">Loading requests...</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+  </main>
+
+  <script type="module" src="src/js/pages/dev-admin.js"></script>
+</body>
+</html>

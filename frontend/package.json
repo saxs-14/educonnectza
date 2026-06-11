@@ -1,0 +1,11 @@
+{
+  "name": "educonnectza-frontend",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx live-server . --port=3000 --no-browser"
+  },
+  "dependencies": {
+    "serve": "^14.2.4",
+    "live-server": "^1.2.2"
+  }
+}

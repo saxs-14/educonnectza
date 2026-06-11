@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Database Explorer | EduConnectZA Dev Console</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="stylesheet" href="src/css/dev-shell.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
+    * { font-family: 'Outfit', sans-serif; }
+    .json-key { color: #4f46e5; font-weight: bold; }
+    .json-string { color: #059669; }
+    .json-number { color: #d97706; }
+  </style>
+</head>
+<body class="bg-slate-50 antialiased">
+  <nav class="gradient-bg text-white shadow-xl sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center space-x-3">
+          <div class="bg-white p-2 rounded-xl shadow-inner"><i class="fas fa-database text-blue-800 text-lg"></i></div>
+          <span class="font-bold tracking-tight">Database Explorer</span>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- GLOBAL TABS -->
+    <div class="global-tab-bar mb-8">
+      <a href="dev-admin-dashboard.html" class="global-tab"><i class="fas fa-th-large"></i> Overview</a>
+      <a href="dev-user-management.html" class="global-tab"><i class="fas fa-users"></i> Users</a>
+      <a href="dev-school-management.html" class="global-tab"><i class="fas fa-school"></i> Schools</a>
+      <a href="dev-ai-insights.html" class="global-tab"><i class="fas fa-brain"></i> AI Audit</a>
+      <a href="dev-system-controls.html" class="global-tab"><i class="fas fa-server"></i> System</a>
+      <a href="dev-content-management.html" class="global-tab"><i class="fas fa-book"></i> Content</a>
+      <a href="dev-database-explorer.html" class="global-tab active"><i class="fas fa-database"></i> Database</a>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <!-- Collection List -->
+        <div class="lg:col-span-1 space-y-4">
+            <h2 class="text-xs font-bold text-slate-400 uppercase tracking-widest px-2">Collections</h2>
+            <div id="collectionList" class="space-y-2">
+                <!-- Dynamic collection items -->
+                <div class="animate-pulse bg-slate-200 h-10 rounded-xl"></div>
+                <div class="animate-pulse bg-slate-200 h-10 rounded-xl"></div>
+                <div class="animate-pulse bg-slate-200 h-10 rounded-xl"></div>
+            </div>
+        </div>
+
+        <!-- Document Viewer -->
+        <div class="lg:col-span-3">
+            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 overflow-hidden min-h-[600px] flex flex-col">
+                <div class="p-6 bg-slate-50 border-b border-slate-200 flex justify-between items-center">
+                    <div class="flex items-center gap-3">
+                        <i class="fas fa-file-alt text-slate-400"></i>
+                        <span id="currentCollectionName" class="font-bold text-slate-900 uppercase text-xs tracking-widest">Select a collection</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <button id="refreshCollection" class="p-2 hover:bg-slate-200 rounded-lg text-slate-500 transition"><i class="fas fa-sync"></i></button>
+                    </div>
+                </div>
+                <div id="documentGrid" class="flex-1 p-6 space-y-4 overflow-y-auto">
+                    <!-- Dynamic documents -->
+                    <div class="text-center py-20 text-slate-300">
+                        <i class="fas fa-search text-5xl mb-4 opacity-20"></i>
+                        <p>No collection selected. Choose one from the left to explore documents.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </main>
+
+  <script type="module" src="src/js/pages/dev-database.js"></script>
+</body>
+</html>

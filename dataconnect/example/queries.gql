@@ -1,0 +1,61 @@
+query ListAllCourses @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public as it lists general course information.") {
+  courses {
+    id
+    name
+    courseCode
+    gradeLevel
+    description
+    syllabusUrl
+    teacher {
+      id
+      firstName
+      lastName
+      username
+    }
+    createdAt
+  }
+}
+
+query GetMyAssignments @auth(level: USER) {
+  assignments(where: { teacher: { id_expr: "auth.uid" } }) {
+    id
+    title
+    dueDate
+    maxPoints
+    assignmentType
+    description
+    course {
+      name
+      courseCode
+    }
+    createdAt
+  }
+}
+
+mutation CreateNewUser($username: String!, $email: String!, $passwordHash: String!, $role: String!, $firstName: String, $lastName: String, $dateOfBirth: Date) @auth(level: PUBLIC, insecureReason: "This operation is safe to expose to the public for user registration.") {
+  user_insert(data: {
+    username: $username,
+    email: $email,
+    passwordHash: $passwordHash,
+    role: $role,
+    firstName: $firstName,
+    lastName: $lastName,
+    dateOfBirth: $dateOfBirth,
+    createdAt_expr: "request.time"
+  }) {
+    id
+  }
+}
+
+mutation SubmitAssignment($assignmentId: UUID!, $submissionContentUrl: String!) @auth(level: USER) {
+  submission_insert(data: {
+    studentId_expr: "auth.uid",
+    assignmentId: $assignmentId,
+    submissionContentUrl: $submissionContentUrl,
+    submissionDate_expr: "request.time",
+    status: "Submitted"
+  }) {
+    studentId
+    assignmentId
+  }
+}

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduConnectZA - Sign Up</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="manifest" href="manifest.json">
+  <style>
+    .loader { border-top-color: #1e3a8a; animation: spinner 0.8s linear infinite; }
+    @keyframes spinner { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body class="bg-gray-50 flex items-center justify-center min-h-screen p-4">
+  <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-3xl">
+    <div class="text-center mb-6">
+      <img src="images/logo.png" alt="EduConnectZA" class="h-16 mx-auto">
+      <h2 class="text-2xl font-bold text-gray-800">Create Account</h2>
+      <p class="text-gray-500">Join your school's learning community</p>
+    </div>
+    <form id="signup-form" enctype="multipart/form-data">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-700 mb-1">Full Names</label>
+          <input type="text" name="fullNames" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Surname</label>
+          <input type="text" name="surname" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">ID Number</label>
+          <input type="text" name="idNumber" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Date of Birth</label>
+          <input type="date" name="dateOfBirth" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">School Code</label>
+          <input type="text" id="schoolCode" name="schoolCode" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+          <p id="school-name" class="text-sm text-green-600 mt-1 hidden"></p>
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Role</label>
+          <select name="role" id="role" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            <option value="">Select</option>
+            <option value="Learner">Learner</option>
+            <option value="Teacher">Teacher</option>
+          </select>
+        </div>
+        <div id="grade-field" class="hidden">
+          <label class="block text-gray-700 mb-1">Grade</label>
+          <select name="grade" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+            <option value="8">Grade 8</option>
+            <option value="9">Grade 9</option>
+            <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
+            <option value="12">Grade 12</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Email</label>
+          <input type="email" name="email" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Password</label>
+          <input type="password" name="password" required minlength="6" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500">
+        </div>
+        <div>
+          <label class="block text-gray-700 mb-1">Profile Picture</label>
+          <input type="file" name="profilePicture" accept="image/*" capture="environment" required class="w-full px-4 py-2 border rounded-lg">
+        </div>
+      </div>
+      <div class="mt-4">
+        <label class="flex items-center">
+          <input type="checkbox" name="parentConsent" class="mr-2"> I confirm parental/guardian consent (if under 18)
+        </label>
+      </div>
+      <button type="submit" class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 flex items-center justify-center">
+        <span class="loader rounded-full border-2 border-t-2 border-white h-5 w-5 mr-2 hidden" id="signup-spinner"></span>
+        <span id="signup-text">Sign Up</span>
+      </button>
+      <p class="mt-4 text-center text-gray-600">
+        Already have an account? <a href="index.html" class="text-blue-600 hover:underline">Log in</a>
+      </p>
+    </form>
+    <div id="error-message" class="mt-4 text-red-500 text-sm hidden"></div>
+  </div>
+  <script type="module" src="src/js/signup.js"></script>
+</body>
+</html>

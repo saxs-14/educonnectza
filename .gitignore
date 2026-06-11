@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Environment variables — never commit real credentials
+.env
+.env.local
+.env.production
+**/.env
+**/.env.local
+**/.env.production
+backend/.env.txt
+
+# Firebase service account private key
+backend/firebase-service-account.json
+
+# Uploaded user files
+backend/uploads/
+
+# Python virtual environment
+venv/
+**/venv/
+__pycache__/
+**/__pycache__/
+*.pyc
+*.pyo
+
+# Build outputs
+dist/
+build/
+.firebase/
+
+# IDE / OS
+.DS_Store
+Thumbs.db
+*.crdownload
+
+# Logs
+*.log
+npm-debug.log*
+
+# Lock files (keep package-lock.json for reproducibility, ignore yarn.lock if not used)
+# package-lock.json  <-- keep this

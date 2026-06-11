@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EduConnectZA - School Admin | Institutional Oversight</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #065f46; /* emerald-800 default */
+      --secondary-color: #10b981; /* emerald-500 default */
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    .text-primary { color: var(--primary-color); }
+    .bg-primary { background-color: var(--primary-color); }
+    .border-primary { border-color: var(--primary-color); }
+
+    /* subtle custom transitions */
+    .card-hover:hover {
+      transform: translateY(-2px);
+      transition: all 0.2s ease;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    }
+    .progress-bar {
+      transition: width 0.5s ease;
+    }
+    .emergency-badge {
+      animation: pulse-emergency 1.5s infinite;
+    }
+    @keyframes pulse-emergency {
+      0% { opacity: 0.8; background-color: #dc2626; }
+      50% { opacity: 1; background-color: #ef4444; box-shadow: 0 0 8px #ef4444; }
+      100% { opacity: 0.8; background-color: #dc2626; }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans">
+  <nav class="bg-primary text-white shadow-lg sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center gap-3">
+          <img src="" class="school-logo h-8 w-auto hidden" alt="Logo">
+          <span class="font-bold text-xl tracking-tight">EduConnectZA <span class="text-emerald-200 text-xs font-mono ml-2 px-2 py-1 bg-black/20 rounded school-name uppercase">SCHOOL ADMIN</span></span>
+          <!-- Emergency broadcast indicator -->
+          <div class="hidden md:flex items-center gap-1 ml-4">
+            <i class="fas fa-bullhorn text-emerald-300 text-sm"></i>
+            <span class="text-xs text-emerald-100">Emergency ready</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <button id="emergency-broadcast-btn" class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow flex items-center gap-1">
+            <i class="fas fa-exclamation-triangle"></i> Alert
+          </button>
+          <button id="logout-btn" class="bg-emerald-700 hover:bg-emerald-600 px-4 py-2 rounded-md text-sm font-medium transition shadow-sm">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header with school info -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900">School Dashboard</h1>
+        <p class="text-gray-500 mt-1">Institutional oversight · Progress · Compliance · Resources</p>
+      </div>
+      <div class="bg-white px-4 py-2 rounded-xl shadow-sm border text-sm">
+        <i class="fas fa-calendar-alt text-emerald-600 mr-2"></i> Term 2, 2025 · Next break: 27 June
+      </div>
+    </div>
+    
+    <!-- Original stat cards (expanded but preserved) -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 card-hover">
+        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Active Teachers</h3>
+        <p class="text-4xl font-bold text-emerald-600 mt-2">42</p>
+        <div class="mt-4">
+          <button class="text-emerald-600 hover:text-emerald-800 text-sm font-medium flex items-center gap-1">Manage Teachers <i class="fas fa-arrow-right text-xs"></i></button>
+        </div>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 card-hover">
+        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Enrolled Learners</h3>
+        <p class="text-4xl font-bold text-emerald-600 mt-2">850</p>
+        <div class="mt-4">
+          <button class="text-emerald-600 hover:text-emerald-800 text-sm font-medium flex items-center gap-1">Manage Learners <i class="fas fa-arrow-right text-xs"></i></button>
+        </div>
+      </div>
+      <!-- Additional quick stats (integration of new metrics) -->
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 card-hover">
+        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Digital Divide Bridge</h3>
+        <p class="text-4xl font-bold text-emerald-600 mt-2">1,240</p>
+        <p class="text-xs text-gray-500">offline assignments completed</p>
+        <div class="mt-2"><span class="bg-emerald-100 text-emerald-800 text-xs px-2 py-0.5 rounded-full">🏆 Milestone: 1000+ offline syncs</span></div>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 card-hover">
+        <h3 class="text-sm font-medium text-gray-500 uppercase tracking-wide">Literacy/Numeracy Gain</h3>
+        <p class="text-4xl font-bold text-emerald-600 mt-2">+18%</p>
+        <p class="text-xs text-gray-500">YoY improvement (Grade 8–10)</p>
+      </div>
+    </div>
+
+    <!-- School-Wide Progress Heatmap & Literacy/Numeracy Tracker (combined row) -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <!-- Heatmap: grades 8-12 subject performance -->
+      <div class="bg-white rounded-2xl shadow-sm border p-5 card-hover">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="font-bold text-gray-800 text-lg"><i class="fas fa-fire-flame-curved text-orange-500 mr-2"></i>School-Wide Progress Heatmap</h2>
+          <span class="text-xs text-gray-400">Improvement trends</span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead><tr class="border-b"><th class="text-left py-2">Subject</th><th>Gr 8</th><th>Gr 9</th><th>Gr 10</th><th>Gr 11</th><th>Gr 12</th></tr></thead>
+            <tbody>
+              <tr class="border-b"><td class="py-2 font-medium">Math</td><td class="bg-green-100">▲12%</td><td class="bg-green-50">▲5%</td><td class="bg-amber-100">▲8%</td><td class="bg-green-100">▲15%</td><td class="bg-red-100">▼2%</td></tr>
+              <tr class="border-b"><td class="py-2 font-medium">English</td><td class="bg-green-100">▲10%</td><td class="bg-green-100">▲9%</td><td class="bg-green-50">▲6%</td><td class="bg-amber-100">▲7%</td><td class="bg-green-100">▲11%</td></tr>
+              <tr class="border-b"><td class="py-2 font-medium">Science</td><td class="bg-green-100">▲14%</td><td class="bg-green-100">▲11%</td><td class="bg-amber-100">▲8%</td><td class="bg-green-100">▲10%</td><td class="bg-green-100">▲9%</td></tr>
+              <tr><td class="py-2 font-medium">History</td><td class="bg-green-50">▲4%</td><td class="bg-amber-100">▲7%</td><td class="bg-green-100">▲12%</td><td class="bg-green-100">▲13%</td><td class="bg-green-100">▲16%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="mt-3 text-xs text-gray-500 flex gap-3"><span>🟢 Strong gain</span><span>🟡 Moderate</span><span>🔴 Needs intervention</span></div>
+      </div>
+
+      <!-- Literacy/Numeracy Tracker + Digital Divide Bridge details -->
+      <div class="bg-white rounded-2xl shadow-sm border p-5 card-hover">
+        <h2 class="font-bold text-gray-800 text-lg mb-3"><i class="fas fa-chart-line text-blue-500 mr-2"></i>Literacy & Numeracy Tracker</h2>
+        <div class="space-y-4">
+          <div><div class="flex justify-between text-sm"><span>📖 Literacy (Gr 8-9)</span><span>74% proficiency</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:74%"></div></div><p class="text-xs text-gray-500 mt-1">↑ +8% since Term 1</p></div>
+          <div><div class="flex justify-between text-sm"><span>🔢 Numeracy (Gr 10-12)</span><span>68% proficiency</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-emerald-500 h-2 rounded-full" style="width:68%"></div></div><p class="text-xs text-gray-500 mt-1">↑ +5% YoY, intervention planned for June</p></div>
+        </div>
+        <hr class="my-4">
+        <div class="flex items-center justify-between"><span class="font-medium">🎯 Digital Divide Bridge Milestones</span><span class="bg-amber-100 text-amber-800 rounded-full px-2 py-0.5 text-xs">Offline-first champion</span></div>
+        <div class="mt-2 grid grid-cols-3 gap-2 text-center text-xs"><div>📱 342 offline submissions</div><div>🔄 88% sync rate</div><div>🏅 120 badges earned</div></div>
+      </div>
+    </div>
+
+    <!-- Teacher & Class Oversight + Professional Development Tracker -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <div class="flex justify-between items-center mb-3"><h2 class="font-bold text-gray-800"><i class="fas fa-chalkboard-user text-emerald-600 mr-2"></i>Teacher & Class Oversight</h2><button class="text-xs bg-gray-100 px-2 py-1 rounded-md">Usage metrics</button></div>
+        <div class="space-y-3">
+          <div class="flex justify-between"><span>📊 Automated marking adoption</span><span class="font-mono">34/42 teachers (81%)</span></div><div class="w-full bg-gray-200 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full w-[81%]"></div></div>
+          <div class="flex justify-between"><span>🎯 Differentiated instruction usage</span><span class="font-mono">28 teachers</span></div>
+          <div class="flex justify-between"><span>📈 Student engagement (avg weekly)</span><span class="font-mono">92% active learners</span></div>
+        </div>
+        <div class="mt-4 bg-gray-50 p-3 rounded-xl"><span class="text-sm font-medium">Top performing class:</span> Grade 11C – 94% assignment completion</div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-gray-800 mb-3"><i class="fas fa-graduation-cap text-purple-600 mr-2"></i>Teacher Professional Development</h2>
+        <div class="flex flex-col gap-2">
+          <div class="flex justify-between items-center"><span>📘 "EdTech Integration" module</span><span class="text-sm">28/42 completed</span><button class="text-xs bg-purple-100 px-2 py-1 rounded">Remind</button></div>
+          <div class="flex justify-between items-center"><span>📊 "Data-driven instruction"</span><span class="text-sm">19/42 completed</span><button class="text-xs bg-purple-100 px-2 py-1 rounded">Track</button></div>
+          <div class="flex justify-between items-center"><span>⚙️ "Offline-first strategies"</span><span class="text-sm">32/42 completed</span></div>
+        </div>
+        <div class="mt-3 text-xs text-gray-500">✅ Next workshop: June 12 – "AI marking assistant"</div>
+      </div>
+    </div>
+
+    <!-- Academic Calendar Management + Parent Conference Toolkit -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <div class="flex justify-between"><h2 class="font-bold text-gray-800"><i class="fas fa-calendar-week text-sky-600 mr-2"></i>Academic Calendar</h2><button id="edit-calendar-btn" class="text-xs text-emerald-600">✏️ Customize</button></div>
+        <div class="mt-3 space-y-2 text-sm">
+          <div class="flex justify-between"><span>📅 Term 2 exams:</span><span class="font-mono">10–25 June 2025</span></div>
+          <div class="flex justify-between"><span>🏖️ Winter holiday:</span><span class="font-mono">27 June – 14 July</span></div>
+          <div class="flex justify-between"><span>📆 Public holiday (Youth Day):</span><span>16 June</span></div>
+          <div class="flex justify-between"><span>🗓️ Parent-teacher conferences:</span><span>28–30 July</span></div>
+        </div>
+        <div class="mt-2 pt-2 border-t text-xs text-gray-400">Provincial adjustments: Eastern Cape, Gauteng aligned</div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-gray-800"><i class="fas fa-file-alt text-indigo-500 mr-2"></i>Parent Conference Toolkit</h2>
+        <div class="mt-2 flex flex-wrap gap-3">
+          <button class="bg-indigo-50 text-indigo-700 text-xs px-3 py-2 rounded-xl flex items-center gap-1"><i class="fas fa-chart-pie"></i>Aggregated progress reports</button>
+          <button class="bg-indigo-50 text-indigo-700 text-xs px-3 py-2 rounded-xl flex items-center gap-1"><i class="fas fa-folder-open"></i>Portfolio showcase</button>
+          <button class="bg-indigo-50 text-indigo-700 text-xs px-3 py-2 rounded-xl flex items-center gap-1"><i class="fas fa-calendar-check"></i>Schedule conferences</button>
+        </div>
+        <div class="mt-3 text-sm"><span class="font-medium">📈 Ready-to-share highlights:</span> Literacy +12%, Numeracy +9% across Grades</div>
+      </div>
+    </div>
+
+    <!-- Equity & Inclusion Metrics + Resource Allocation Monitor -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-scale-balanced text-teal-600"></i>Equity & Inclusion Metrics</h2>
+        <div class="grid grid-cols-2 gap-3 mt-3 text-sm">
+          <div class="bg-gray-50 p-3 rounded-xl"><span class="text-gray-500">Gender participation</span><p class="font-bold">♀ 52% · ♂ 48%</p><span class="text-xs">balanced enrollment</span></div>
+          <div class="bg-gray-50 p-3 rounded-xl"><span class="text-gray-500">Subject diversity (STEM)</span><p class="font-bold">Girls in Science: 44%</p><div class="w-full bg-gray-200 h-1 rounded-full mt-1"><div class="bg-teal-500 h-1 rounded-full w-[44%]"></div></div></div>
+          <div class="bg-gray-50 p-3 rounded-xl"><span class="text-gray-500">Digital access gap</span><p class="font-bold">12% learners have no home device</p><button class="text-xs text-teal-600 mt-1">Bridge program active</button></div>
+          <div class="bg-gray-50 p-3 rounded-xl"><span class="text-gray-500">Inclusive education</span><p class="font-bold">15 learners with IEPs supported</p></div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-microchip text-amber-600"></i>Resource Allocation Monitor</h2>
+        <div class="space-y-3 mt-2">
+          <div><div class="flex justify-between text-sm"><span>📱 Shared device utilization</span><span>78%</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-amber-500 h-2 rounded-full w-[78%]"></div></div></div>
+          <div><div class="flex justify-between text-sm"><span>📚 Digital textbook access</span><span>94% learners active</span></div></div>
+          <div><div class="flex justify-between text-sm"><span>🔬 Lab equipment tracking</span><span>Science labs: 23/30 in use</span></div></div>
+        </div>
+        <div class="mt-4 bg-amber-50 p-2 rounded-lg text-xs">⚡ Reallocation recommended: 15 tablets to Grade 8 Mathematics</div>
+      </div>
+    </div>
+
+    <!-- Cross-School Benchmarking + Community Engagement Hub -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-gray-800"><i class="fas fa-chart-simple text-blue-500 mr-2"></i>Cross-School Benchmarking</h2>
+        <div class="mt-2 space-y-3">
+          <div class="flex justify-between text-sm border-b pb-2"><span>Math average (Gr 12)</span><span class="font-bold">Our school: 67%</span><span>Provincial: 63%</span><span class="text-green-600">▲ +4%</span></div>
+          <div class="flex justify-between text-sm border-b pb-2"><span>Science pass rate</span><span class="font-bold">70%</span><span>Similar schools: 68%</span><span class="text-green-600">▲ +2%</span></div>
+          <div class="flex justify-between text-sm"><span>Literacy (Gr 9)</span><span class="font-bold">76%</span><span>District avg: 71%</span><span class="text-green-600">Top quartile</span></div>
+        </div>
+        <button class="mt-3 text-xs bg-gray-100 px-3 py-1.5 rounded-full w-full">📊 Compare detailed provincial benchmarks →</button>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-comments text-pink-500"></i>Community Engagement Hub</h2>
+        <div class="max-h-36 overflow-y-auto space-y-2 text-sm">
+          <div class="bg-gray-50 p-2 rounded-lg flex justify-between"><span>🗣️ Parent survey (May): 87% satisfied</span><i class="fas fa-chart-simple text-gray-400"></i></div>
+          <div class="bg-gray-50 p-2 rounded-lg"><span>📢 Announcement: School sports day – 22 June</span><button class="text-xs text-emerald-600 ml-2">Resend</button></div>
+          <div class="bg-gray-50 p-2 rounded-lg"><span>💬 Feedback: "Offline assignments helped during load shedding"</span></div>
+        </div>
+        <div class="mt-3 flex gap-2">
+          <button id="broadcast-msg-btn" class="bg-emerald-600 text-white text-xs px-3 py-1.5 rounded-lg">📢 Send school announcement</button>
+          <button id="survey-mock" class="border border-gray-300 text-xs px-3 py-1.5 rounded-lg">📋 Launch parent pulse survey</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Permission & Data Oversight (School-wide) + Emergency Communication System -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-gray-800"><i class="fas fa-shield-alt text-gray-700 mr-2"></i>Permission & Data Oversight</h2>
+        <div class="mt-2 text-sm space-y-2">
+          <div class="flex justify-between"><span>📸 Camera grant rate (learners)</span><span>79%</span><div class="w-24 bg-gray-200 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full w-[79%]"></div></div></div>
+          <div class="flex justify-between"><span>💾 Storage permission</span><span>94%</span><div class="w-24 bg-gray-200 rounded-full h-1.5"><div class="bg-emerald-500 h-1.5 rounded-full w-[94%]"></div></div></div>
+          <div class="flex justify-between"><span>📍 Location tracking (opt-in)</span><span>22%</span><div class="w-24 bg-gray-200 rounded-full h-1.5"><div class="bg-gray-400 h-1.5 rounded-full w-[22%]"></div></div></div>
+          <div class="mt-2 text-xs text-gray-500"><i class="fas fa-database"></i> School-wide compliance: POPIA consent collected for 96% of parents</div>
+          <button class="mt-2 text-xs bg-blue-50 text-blue-700 px-3 py-1 rounded-md">Review data requests</button>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border p-5 relative">
+        <div class="absolute top-3 right-3"><span class="emergency-badge bg-red-600 text-white text-[10px] px-2 py-0.5 rounded-full">LIVE ALERT</span></div>
+        <h2 class="font-bold text-gray-800"><i class="fas fa-broadcast-tower text-red-500 mr-2"></i>Emergency Communication System</h2>
+        <p class="text-sm mt-1">Push urgent alerts to all student / teacher dashboards & mobile devices</p>
+        <div class="mt-3 flex flex-wrap gap-2">
+          <button id="emergency-weather-btn" class="bg-red-100 text-red-700 text-xs px-4 py-2 rounded-lg flex items-center gap-1"><i class="fas fa-cloud-rain"></i> Weather closure</button>
+          <button id="emergency-safety-btn" class="bg-red-100 text-red-700 text-xs px-4 py-2 rounded-lg"><i class="fas fa-shield-virus"></i> Safety notice</button>
+          <button id="emergency-test-btn" class="bg-red-100 text-red-700 text-xs px-4 py-2 rounded-lg"><i class="fas fa-bell"></i> Test broadcast</button>
+        </div>
+        <div class="mt-3 text-xs border-t pt-2 text-gray-500"><i class="fas fa-check-circle text-green-500"></i> Last alert: 12 May 2025 – Transport disruption resolved</div>
+      </div>
+    </div>
+
+    <!-- Additional: Teacher & Class Oversight extended + quick actions for academic calendar -->
+    <div class="bg-white rounded-2xl shadow-sm border p-5 mt-2">
+      <div class="flex flex-wrap justify-between items-center">
+        <div><h3 class="font-bold"><i class="fas fa-clock text-emerald-500"></i> Upcoming school-wide deadlines</h3></div>
+        <div class="text-sm"><span class="bg-yellow-100 px-2 py-1 rounded-full">Exam registration deadline: 30 May</span></div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3 text-sm">
+        <div>🗂️ Teacher grade submissions due: 5 June</div>
+        <div>📖 Library return week: 16–20 June</div>
+        <div>🏅 Parent conference scheduling open</div>
+      </div>
+    </div>
+
+  </main>
+
+  <script type="module">
+    import { auth } from './src/js/firebase.js';
+    import { applyTheme } from './src/js/theme-engine.js';
+    
+    // Initialize Theme
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme();
+    });
+    
+    // Authentication + logout (preserved)
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+      auth.signOut().then(() => { 
+        localStorage.removeItem('user');
+        window.location.href = 'index.html'; 
+      });
+    });
+
+    // Interactive mock functions for added features (no backend, just simulated feedback)
+    const toastAlert = (msg) => alert(msg);
+    document.getElementById('emergency-broadcast-btn')?.addEventListener('click', () => toastAlert("🚨 EMERGENCY BROADCAST interface: compose alert to send to all learners/parents/teachers."));
+    document.getElementById('emergency-weather-btn')?.addEventListener('click', () => toastAlert("🌧️ Weather closure alert sent to 850 learners + 42 teachers. Push notification delivered."));
+    document.getElementById('emergency-safety-btn')?.addEventListener('click', () => toastAlert("🛡️ Safety notice broadcasted: all dashboards show critical announcement."));
+    document.getElementById('emergency-test-btn')?.addEventListener('click', () => toastAlert("✅ Test broadcast successful. System ready."));
+    document.getElementById('edit-calendar-btn')?.addEventListener('click', () => toastAlert("📅 Custom term dates, exam slots, and provincial holidays can be adjusted here."));
+    document.getElementById('broadcast-msg-btn')?.addEventListener('click', () => toastAlert("📢 School announcement published: 'Parent-Teacher Conference reminder' sent to all."));
+    document.getElementById('survey-mock')?.addEventListener('click', () => toastAlert("📋 Parent feedback survey launched. Responses will be aggregated in Community Hub."));
+
+    // teacher / resource mocks
+    document.querySelectorAll('.bg-emerald-600.text-white.text-xs.px-3.py-1.rounded-lg, .bg-indigo-50.text-indigo-700.text-xs.px-3.py-2.rounded-xl, .text-emerald-600.hover\\:text-emerald-800').forEach(btn => {
+      if(btn.innerText.includes('Manage') || btn.innerText.includes('Compare') || btn.innerText.includes('Review')) {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); toastAlert("🔧 Detailed management panel would open in production."); });
+      }
+    });
+    document.querySelectorAll('.approve-school-mock')?.forEach(el => {});
+    // Additional minor events
+    document.getElementById('edit-calendar-btn')?.addEventListener('click', () => {});
+    
+    console.log("School Admin Dashboard: Enhanced with institutional oversight & emergency features.");
+  </script>
+  <!-- Ensure all interactive toggles are covered -->
+  <script>
+    // Fallback for any missing buttons, adds manual listeners for remaining buttons
+    const btns = document.querySelectorAll('button');
+    btns.forEach(btn => {
+      if(!btn.hasAttribute('data-listener') && btn.id !== 'logout-btn' && btn.innerText !== 'Log Out') {
+        // skip if already has listener from above
+        if(btn.id && (btn.id.includes('emergency') || btn.id.includes('broadcast') || btn.id.includes('survey') || btn.id === 'edit-calendar-btn')) return;
+        if(btn.closest('.bg-indigo-50') || btn.classList.contains('text-emerald-600')) {
+          btn.addEventListener('click', (e) => { e.stopPropagation(); alert("✨ Feature preview: This action will be available in the full integration."); });
+        }
+      }
+    });
+  </script>
+</body>
+</html>

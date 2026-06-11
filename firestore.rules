@@ -1,0 +1,52 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserRole() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
+    }
+    
+    // ---------- Dev‑admin by email ----------
+    function isDevAdminEmail() {
+      // The request.auth token always contains the signed‑in user's e‑mail.
+      return request.auth != null && request.auth.token.email == 'mamagauphathu@gmail.com';
+    }
+
+    // Update the existing isDevAdmin() helper to also accept the email shortcut.
+    function isDevAdmin() {
+      // Either the user document has role = 'devAdmin' OR the e‑mail matches.
+      return isAuthenticated() && (
+        getUserRole() == 'devAdmin' ||
+        isDevAdminEmail()
+      );
+    }
+    
+    function isSchoolAdmin() {
+      return isAuthenticated() && getUserRole() == 'SchoolAdmin';
+    }
+    
+    function isTeacher() {
+      return isAuthenticated() && getUserRole() == 'Teacher';
+    }
+
+    match /users/{userId} {
+      // DevAdmins can read/write all users
+      // Users can read their own profile
+      allow read: if isDevAdmin() || request.auth.uid == userId || isSchoolAdmin();
+      allow write: if isDevAdmin() || isSchoolAdmin() || 
+        // Allow self-registration only if setting a valid, non-admin role
+        (request.auth.uid == userId && (request.resource.data.role == 'Teacher' || request.resource.data.role == 'Learner'));
+    }
+    
+    // Add additional rules for other collections as needed.
+    // DevAdmin has full access to everything.
+    match /{document=**} {
+      allow read, write: if isDevAdmin();
+    }
+  }
+}

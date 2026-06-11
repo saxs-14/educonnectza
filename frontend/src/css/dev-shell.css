@@ -1,0 +1,83 @@
+/* Dev Admin Console Shell Styles */
+
+:root {
+    --dev-primary: #1e3a8a;
+    --dev-secondary: #3b82f6;
+    --dev-accent: #6366f1;
+    --dev-glass: rgba(255, 255, 255, 0.85);
+    --dev-border: rgba(255, 255, 255, 0.5);
+}
+
+.glass-card {
+    background: var(--dev-glass);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--dev-border);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.gradient-bg {
+    background: linear-gradient(135deg, var(--dev-primary) 0%, var(--dev-secondary) 100%);
+}
+
+/* Global Tab Bar Styling */
+.global-tab-bar {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.25rem;
+    background: rgba(226, 232, 240, 0.5); /* slate-200/50 */
+    border-radius: 1rem;
+    overflow-x: auto;
+    scrollbar-width: none; /* Firefox */
+}
+
+.global-tab-bar::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+}
+
+.global-tab {
+    flex: 1;
+    min-width: 140px;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-align: center;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    white-space: nowrap;
+}
+
+.global-tab.active {
+    background: white;
+    color: var(--dev-secondary);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.global-tab:not(.active) {
+    color: #64748b; /* slate-500 */
+}
+
+.global-tab:not(.active):hover {
+    color: #334155; /* slate-700 */
+    background: rgba(255,255,255,0.3);
+}
+
+/* Responsive Table */
+.responsive-table-container {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}

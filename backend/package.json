@@ -1,0 +1,33 @@
+{
+  "name": "educonnectza-backend",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
+    "seed": "node utils/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
+    "csv-parse": "^6.2.1",
+    "dotenv": "^16.6.1",
+    "express": "^4.22.1",
+    "express-async-handler": "^1.2.0",
+    "firebase-admin": "^13.8.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongodb": "^7.2.0",
+    "mongoose": "^7.8.9",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.10.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "description": "",
+  "main": "server.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

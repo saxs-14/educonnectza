@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>EduConnectZA - Learner | Motivation & Access</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary-color: #2563eb; /* blue-600 default */
+      --secondary-color: #1d4ed8; /* blue-700 default */
+    }
+    .gradient-bg {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    }
+    .text-primary { color: var(--primary-color); }
+    .bg-primary { background-color: var(--primary-color); }
+    .border-primary { border-color: var(--primary-color); }
+
+    /* custom styles for accessibility toggles & offline indicators */
+    body.dyslexic {
+      font-family: 'OpenDyslexic', 'Comic Neue', sans-serif;
+    }
+    .badge-earned {
+      background: linear-gradient(135deg, #fbbf24, #f59e0b);
+      color: white;
+    }
+    .progress-ring {
+      transition: stroke-dashoffset 0.5s;
+    }
+    .offline-badge {
+      background-color: #fef9c3;
+      border-left: 4px solid #eab308;
+    }
+    .tooltip-hover:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    .tooltip-text {
+      visibility: hidden;
+      background-color: #1f2937;
+      color: #fff;
+      text-align: center;
+      border-radius: 6px;
+      padding: 2px 6px;
+      position: absolute;
+      z-index: 10;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 min-h-screen font-sans transition-all duration-300">
+  <nav class="bg-primary text-white shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <div class="flex items-center gap-3">
+          <img src="" class="school-logo h-8 w-auto hidden" alt="Logo">
+          <span class="font-bold text-xl tracking-tight">EduConnectZA</span>
+          <span id="school-verified-badge" class="bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full"><i class="fas fa-check-circle"></i> Verified School</span>
+        </div>
+        <div class="flex items-center gap-3">
+          <!-- Accessibility Toggles -->
+          <div class="relative flex items-center gap-2">
+            <button id="dyslexic-toggle" class="bg-blue-700 hover:bg-blue-800 text-white text-xs px-2 py-1 rounded-md"><i class="fas fa-font"></i> Dyslexic</button>
+            <button id="tts-toggle" class="bg-blue-700 hover:bg-blue-800 text-white text-xs px-2 py-1 rounded-md"><i class="fas fa-volume-up"></i> TTS</button>
+            <button id="low-data-toggle" class="bg-blue-700 hover:bg-blue-800 text-white text-xs px-2 py-1 rounded-md"><i class="fas fa-tachometer-alt"></i> Low Data</button>
+          </div>
+          <button id="logout-btn" class="bg-blue-700 hover:bg-blue-500 px-4 py-2 rounded-md text-sm font-medium transition shadow-sm">Log Out</button>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+    <!-- Header with Welcome and Current Grade (preserved) -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+      <div>
+        <h1 class="text-3xl font-extrabold text-gray-900">Welcome back, <span id="learner-name">Thabo</span>!</h1>
+        <div class="flex items-center gap-2 mt-1">
+          <span class="text-sm text-gray-500"><i class="fas fa-school"></i> <span class="school-name">West High School</span> · Grade 11</span>
+          <!-- Offline Indicator -->
+          <span id="offline-status" class="inline-flex items-center bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full"><i class="fas fa-wifi mr-1"></i> Online</span>
+        </div>
+      </div>
+      <div class="text-right bg-white px-5 py-2 rounded-2xl shadow-sm">
+        <p class="text-xs font-medium text-gray-500 uppercase">Current Term Grade</p>
+        <p class="text-3xl font-bold text-blue-600">84%</p>
+        <p class="text-[10px] text-green-600"><i class="fas fa-arrow-up"></i> +6% vs last term</p>
+      </div>
+    </div>
+
+    <!-- Progress Tracker & Gamified Badges Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border row-span-1">
+        <h2 class="font-bold text-gray-800 flex items-center gap-2"><i class="fas fa-chart-line text-blue-500"></i> My Progress</h2>
+        <div class="mt-3 space-y-3">
+          <div><div class="flex justify-between text-sm"><span>Overall completion</span><span>76%</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-blue-500 h-2 rounded-full" style="width:76%"></div></div></div>
+          <div><div class="flex justify-between text-sm"><span>Mathematics</span><span>82%</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-indigo-500 h-2 rounded-full" style="width:82%"></div></div></div>
+          <div><div class="flex justify-between text-sm"><span>Physical Sciences</span><span>71%</span></div><div class="w-full bg-gray-200 rounded-full h-2"><div class="bg-purple-500 h-2 rounded-full" style="width:71%"></div></div></div>
+        </div>
+        <div class="mt-4 text-xs text-gray-400">📈 Improvement trend: +12% in last 30 days</div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border">
+        <div class="flex justify-between"><h2 class="font-bold"><i class="fas fa-medal text-yellow-500"></i> Gamified Badges</h2><button class="text-xs text-blue-500">View all</button></div>
+        <div class="flex flex-wrap gap-2 mt-3">
+          <span class="badge-earned text-xs px-3 py-1 rounded-full"><i class="fas fa-bolt"></i> Consistency King</span>
+          <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full"><i class="fas fa-cloud-upload-alt"></i> Offline Master</span>
+          <span class="bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full"><i class="fas fa-quiz"></i> Quiz Whiz</span>
+          <span class="badge-earned text-xs px-3 py-1 rounded-full"><i class="fas fa-microscope"></i> Science Explorer</span>
+        </div>
+        <p class="text-xs text-gray-400 mt-2">🎯 Next badge: "Past Paper Pro" – complete 5 practice exams</p>
+      </div>
+      <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-5 rounded-2xl shadow-sm border">
+        <h2 class="font-bold flex items-center gap-1"><i class="fas fa-robot text-indigo-600"></i> AI Study Coach</h2>
+        <p class="text-sm mt-2">🎯 Based on your weak areas (Algebra & Electrostatics):</p>
+        <div class="bg-white p-2 rounded-xl text-sm mt-2 shadow-inner">👉 Today: 20 min quadratic equations drill + 3 practice problems on Coulomb's Law.</div>
+        <button id="ai-coach-more" class="text-xs text-indigo-600 mt-2">Ask for personalized plan →</button>
+      </div>
+    </div>
+
+    <!-- Subject Hubs (Original + Enhanced) -->
+    <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2"><i class="fas fa-book-open"></i> My Subjects <span class="text-sm font-normal text-gray-500">(hub & resources)</span></h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
+      <!-- Mathematics Card -->
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 hover:border-blue-400 transition cursor-pointer subject-card" data-subject="math">
+        <div class="h-10 w-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4"><i class="fas fa-calculator text-xl"></i></div>
+        <h3 class="font-bold text-gray-900">Mathematics</h3>
+        <p class="text-sm text-gray-500 mt-1">2 Pending Assignments · 1 Test soon</p>
+        <div class="mt-3 flex gap-2 text-xs"><span class="bg-blue-50 px-2 py-1 rounded">Past papers</span><span class="bg-blue-50 px-2 py-1 rounded">Spaced revision</span></div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 hover:border-purple-400 transition">
+        <div class="h-10 w-10 bg-purple-100 text-purple-600 rounded-lg flex items-center justify-center mb-4"><i class="fas fa-flask text-xl"></i></div>
+        <h3 class="font-bold text-gray-900">Physical Sciences</h3>
+        <p class="text-sm text-gray-500 mt-1">1 Upcoming Test · Sim lab ready</p>
+        <div class="mt-3 flex gap-2 text-xs"><span class="bg-purple-50 px-2 py-1 rounded">AR/VR Module</span><span class="bg-purple-50 px-2 py-1 rounded">Micro-lessons</span></div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 hover:border-green-400 transition">
+        <div class="h-10 w-10 bg-green-100 text-green-600 rounded-lg flex items-center justify-center mb-4"><i class="fas fa-dna text-xl"></i></div>
+        <h3 class="font-bold text-gray-900">Life Sciences</h3>
+        <p class="text-sm text-gray-500 mt-1">Quiz & diagrams</p>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-200 hover:border-amber-400 transition">
+        <div class="h-10 w-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mb-4"><i class="fas fa-language text-xl"></i></div>
+        <h3 class="font-bold text-gray-900">English HL</h3>
+        <p class="text-sm text-gray-500 mt-1">Essay practice</p>
+      </div>
+    </div>
+
+    <!-- Smart Integrated Calendar + Exam Preparation Suite -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <div class="flex justify-between items-center"><h2 class="font-bold text-lg"><i class="fas fa-calendar-alt text-blue-500 mr-2"></i>Smart Calendar</h2><button class="text-xs bg-gray-100 px-2 py-1 rounded"><i class="fas fa-sync-alt"></i> Sync device</button></div>
+        <div class="mt-3 space-y-2 text-sm max-h-48 overflow-y-auto">
+          <div class="flex justify-between border-b pb-2"><span>📐 Math Assignment (Quadratics)</span><span class="text-red-500">Due May 22</span></div>
+          <div class="flex justify-between border-b pb-2"><span>⚛️ Physics Exam Prep</span><span>May 25 · 14:00</span></div>
+          <div class="flex justify-between border-b pb-2"><span>🧪 Life Sciences practical</span><span>May 28</span></div>
+          <div class="flex justify-between"><span>📚 Study session (spaced repetition)</span><span>Today 16:00</span></div>
+        </div>
+        <button id="add-study-plan" class="mt-3 w-full text-sm border border-dashed rounded-xl py-1.5">+ Add study plan</button>
+      </div>
+      <div class="bg-white rounded-2xl shadow-sm border p-5">
+        <h2 class="font-bold text-lg"><i class="fas fa-file-alt text-emerald-600 mr-2"></i>Exam Preparation Suite</h2>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <button class="bg-emerald-50 text-emerald-700 text-xs px-3 py-2 rounded-xl">📄 Past papers (2015-2024)</button>
+          <button class="bg-emerald-50 text-emerald-700 text-xs px-3 py-2 rounded-xl">🎯 Topic-focused quizzes</button>
+          <button class="bg-emerald-50 text-emerald-700 text-xs px-3 py-2 rounded-xl">🔄 Spaced repetition (AI)</button>
+        </div>
+        <div class="mt-4 grid grid-cols-2 gap-2 text-sm">
+          <div class="bg-gray-50 p-2 rounded"><span class="font-medium">Math P1 Nov 2024</span><div class="text-xs">Offline available</div><button class="text-blue-500 text-xs">Download</button></div>
+          <div class="bg-gray-50 p-2 rounded"><span class="font-medium">Physics P2 2023</span><div class="text-xs">With answer key</div><button class="text-blue-500 text-xs">Preview</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Micro-Learning Nuggets + Peer Collaboration Zone + AR/VR Module -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border">
+        <h2 class="font-bold flex items-center gap-2"><i class="fas fa-graduation-cap text-cyan-600"></i>Micro-Learning Nuggets</h2>
+        <div class="mt-2 space-y-2">
+          <div class="border-l-4 border-cyan-300 pl-2 text-sm">⚡ 5-min: Quadratic formula hack</div>
+          <div class="border-l-4 border-cyan-300 pl-2 text-sm">🧪 Quick revision: Newton's 3rd law</div>
+          <div class="border-l-4 border-cyan-300 pl-2 text-sm">📖 Essay structure in 5 minutes</div>
+        </div>
+        <button class="mt-2 text-xs text-cyan-600">More nuggets <i class="fas fa-arrow-right"></i></button>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border">
+        <h2 class="font-bold"><i class="fas fa-users text-indigo-500 mr-2"></i>Peer Collaboration Zone</h2>
+        <p class="text-xs text-gray-500">Moderated study groups · safe forum</p>
+        <div class="mt-2 bg-indigo-50 p-2 rounded text-sm">💬 Today: "Algebra doubts" – 12 replies</div>
+        <div class="bg-indigo-50 p-2 rounded text-sm mt-1">📚 Physics group: preparing for term test</div>
+        <button class="mt-2 text-xs bg-indigo-100 px-3 py-1 rounded-full">Join discussion →</button>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border">
+        <h2 class="font-bold flex items-center gap-2"><i class="fas fa-vr-cardboard text-purple-600"></i>AR/VR Learning Modules</h2>
+        <div class="flex gap-2 mt-2">
+          <button class="bg-purple-100 text-purple-700 text-xs px-3 py-2 rounded-xl">🧪 Chemistry AR Lab</button>
+          <button class="bg-purple-100 text-purple-700 text-xs px-3 py-2 rounded-xl">🏛️ History VR Tour</button>
+        </div>
+        <p class="text-xs text-gray-500 mt-2">Interactive simulations for science experiments</p>
+        <div class="mt-2 text-xs text-green-700"><i class="fas fa-mobile-alt"></i> Works on Android/iOS ARCore</div>
+      </div>
+    </div>
+
+    <!-- Career Guidance Module + Scholarship Alerts + Wellbeing Tracker -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+      <div class="bg-white p-5 rounded-2xl shadow-sm border">
+        <h2 class="font-bold text-lg"><i class="fas fa-briefcase text-amber-600 mr-2"></i>Career Guidance</h2>
+        <div class="mt-2 text-sm space-y-2">
+          <p>🎓 Subject choice: Engineering requires Physical Science & Math (70%+).</p>
+          <p>💰 Bursary: Eskom Engineering Bursary – closes 31 July.</p>
+          <button class="text-xs text-amber-600">View tertiary requirements →</button>
+        </div>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border relative">
+        <div class="absolute top-2 right-2 bg-red-100 text-red-600 text-[10px] px-2 rounded-full animate-pulse">New</div>
+        <h2 class="font-bold text-lg"><i class="fas fa-gift text-pink-500 mr-2"></i>Scholarship & Bursary Alerts</h2>
+        <div class="mt-2 max-h-28 overflow-y-auto text-sm">
+          <div class="border-b pb-1">🏆 NSFAS application open (closing Sep 30)</div>
+          <div class="border-b pb-1 mt-1">✨ Allan Gray Orbis Scholarship – academic merit</div>
+          <div class="mt-1">🔔 New: Funza Lushaka Teaching bursary</div>
+        </div>
+        <button class="mt-2 text-xs text-pink-600">Set alerts for my profile</button>
+      </div>
+      <div class="bg-white p-5 rounded-2xl shadow-sm border">
+        <h2 class="font-bold flex items-center gap-2"><i class="fas fa-heartbeat text-rose-500"></i>Wellbeing & Balance Tracker</h2>
+        <div class="mt-2 text-sm">📊 Study hours today: 2.5h · break suggestions every 45min</div>
+        <div class="mt-2 flex justify-between"><span>😴 Sleep reminder: <span id="sleep-reminder">Set bedtime 22:30</span></span><button class="text-xs text-rose-500">Adjust</button></div>
+        <button class="mt-3 w-full bg-rose-50 text-rose-600 text-xs py-1 rounded-lg">Take a mindful break →</button>
+      </div>
+    </div>
+
+    <!-- Offline-first indicators & cache status -->
+    <div class="bg-white rounded-2xl shadow-sm border p-4 mb-8 offline-badge">
+      <div class="flex flex-wrap justify-between items-center gap-2">
+        <div class="flex items-center gap-2"><i class="fas fa-save text-amber-600"></i><span class="font-medium">Offline-first ready</span></div>
+        <div class="text-sm">📦 Cache status: <span id="cache-size">124 MB</span> · <span id="pending-sync">0 pending background sync</span></div>
+        <button id="force-sync" class="text-xs bg-amber-100 px-3 py-1 rounded">Sync now</button>
+      </div>
+      <p class="text-xs text-gray-500 mt-1">All past papers & quizzes cached. Offline edits will sync automatically when online.</p>
+    </div>
+
+    <!-- Accessibility Note & extra footer -->
+    <div class="text-center text-[11px] text-gray-400 border-t pt-6 mt-4">
+      <i class="fas fa-universal-access"></i> Accessibility: OpenDyslexic font, text-to-speech, low data mode available.
+    </div>
+  </main>
+
+  <script type="module">
+    import { auth } from './src/js/firebase.js';
+    import { applyTheme } from './src/js/theme-engine.js';
+    
+    // Initialize Theme
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTheme();
+    });
+    
+    // Logout (preserved)
+    document.getElementById('logout-btn')?.addEventListener('click', () => {
+      auth.signOut().then(() => { 
+        localStorage.removeItem('user');
+        window.location.href = 'index.html'; 
+      });
+    });
+    
+    // mock auth state for demo (if needed, but real auth remains)
+    console.log("Learner dashboard: offline-first, AI Coach, AR/VR enabled");
+    
+    // Accessibility Toggles simulation
+    let dyslexicActive = false;
+    document.getElementById('dyslexic-toggle')?.addEventListener('click', () => {
+      dyslexicActive = !dyslexicActive;
+      if (dyslexicActive) {
+        document.body.classList.add('dyslexic');
+        alert("🔠 OpenDyslexic font enabled. For better readability.");
+      } else {
+        document.body.classList.remove('dyslexic');
+        alert("Standard font restored.");
+      }
+    });
+    // TTS (Text-to-speech mock)
+    document.getElementById('tts-toggle')?.addEventListener('click', () => {
+      if ('speechSynthesis' in window) {
+        const msg = new SpeechSynthesisUtterance("Text to speech enabled. You can select any text to hear it read aloud. This is a demo integration.");
+        window.speechSynthesis.speak(msg);
+      } else {
+        alert("TTS is supported in modern browsers.");
+      }
+    });
+    // Low data mode simulation (compressed images)
+    let lowData = false;
+    document.getElementById('low-data-toggle')?.addEventListener('click', () => {
+      lowData = !lowData;
+      alert(lowData ? "Low Data Mode: Images optimized, video thumbnails disabled. Data savings active." : "Normal data mode restored.");
+    });
+    
+    // Offline Indicator simulation (Network status)
+    function updateOfflineStatus() {
+      const statusSpan = document.getElementById('offline-status');
+      if (navigator.onLine) {
+        statusSpan.innerHTML = '<i class="fas fa-wifi mr-1"></i> Online';
+        statusSpan.className = "inline-flex items-center bg-green-100 text-green-700 text-xs px-2 py-0.5 rounded-full";
+        document.getElementById('pending-sync').innerText = "0 pending background sync";
+      } else {
+        statusSpan.innerHTML = '<i class="fas fa-plug mr-1"></i> Offline (cached mode)';
+        statusSpan.className = "inline-flex items-center bg-yellow-100 text-yellow-700 text-xs px-2 py-0.5 rounded-full";
+        document.getElementById('pending-sync').innerText = "3 pending sync (will auto-sync)";
+      }
+    }
+    window.addEventListener('online', updateOfflineStatus);
+    window.addEventListener('offline', updateOfflineStatus);
+    updateOfflineStatus();
+    document.getElementById('force-sync')?.addEventListener('click', () => {
+      alert("🔄 Manual sync triggered. Offline assignments & past paper notes synced to cloud.");
+      document.getElementById('pending-sync').innerText = "0 pending background sync";
+    });
+    
+    // AI Study Coach extended
+    document.getElementById('ai-coach-more')?.addEventListener('click', () => {
+      alert("🤖 AI Coach: Based on your last quiz (Algebra 65%, Electrostatics 58%). Today's personalized plan: 20 mins video lesson on quadratic formula + 5 targeted practice questions. Study efficient!");
+    });
+    
+    // Calendar add study plan
+    document.getElementById('add-study-plan')?.addEventListener('click', () => {
+      alert("📅 Smart calendar: Add study session (subject, duration, reminder). Offline sync supported.");
+    });
+    
+    // Peer collaboration zone join
+    document.querySelector('.bg-indigo-100.px-3.py-1.rounded-full')?.addEventListener('click', () => {
+      alert("💬 Peer Collaboration Zone: Join moderated group study forums. You can ask questions and share resources safely.");
+    });
+    // AR/VR module demo
+    document.querySelectorAll('.bg-purple-100.text-purple-700').forEach(btn => {
+      btn.addEventListener('click', () => alert("🕶️ AR/VR Module: This would launch interactive 3D simulation for Chemistry lab / History tour. Requires device support."));
+    });
+    // Scholarship alert mock
+    document.querySelector('.text-pink-600')?.addEventListener('click', () => alert("🔔 Bursary alerts set: You'll receive notifications for STEM & leadership scholarships matching your profile."));
+    // Wellbeing reminder
+    document.querySelector('.bg-rose-50.text-rose-600')?.addEventListener('click', () => alert("🧘 Wellbeing break: 5-minute breathing exercise recommended. You've been studying for 1.5 hours."));
+    // subject cards hub interaction
+    document.querySelectorAll('.subject-card').forEach(card => {
+      card.addEventListener('click', () => alert("📚 Subject hub opens: view assignments, past papers, topic quizzes and AI recommendations."));
+    });
+    // Career guidance, scholarship bursary and extra buttons
+    document.querySelectorAll('.text-amber-600, .bg-emerald-50, .text-blue-500').forEach(btn => {
+      if(btn.innerText.includes('Past papers') || btn.innerText.includes('Download') || btn.innerText.includes('Preview') || btn.innerText.includes('View tertiary')) {
+        btn.addEventListener('click', (e) => { e.stopPropagation(); alert("📄 Full exam preparation suite: Past papers from 2015–2024, answer keys, offline mode, and spaced repetition system."); });
+      }
+    });
+    // Micro-learning nuggets
+    document.querySelector('.text-cyan-600')?.addEventListener('click', () => alert("⚡ Micro-learning library: 5-minute lessons covering key topics across all subjects, available offline."));
+    // School verified badge status
+    console.log("School verification status: active (code redeemed)");
+    // Override learner name from localStorage? keep static
+    document.getElementById('learner-name')?.innerText = localStorage.getItem('learnerName') || "Thabo";
+  </script>
+  <script>
+    // Fallback for any non-intercepted interactive elements (ensure all new features have demo simulation)
+    document.querySelectorAll('button').forEach(btn => {
+      if(!btn.hasAttribute('data-listener-added') && btn.id !== 'logout-btn' && !btn.closest('#tts-toggle') && !btn.closest('#dyslexic-toggle') && !btn.closest('#low-data-toggle')) {
+        btn.setAttribute('data-listener-added', 'true');
+        btn.addEventListener('click', (e) => {
+          if(btn.innerText.includes('Sync') || btn.innerText.includes('Set alerts') || btn.innerText.includes('Adjust') || btn.innerText.includes('More nuggets')) {
+            // already handled by specific mocks, but as backup
+            if(!btn.id.includes('force-sync')) alert("✨ Feature ready: full integration in progress. Stay tuned!");
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
