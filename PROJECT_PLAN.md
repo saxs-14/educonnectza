@@ -2,7 +2,7 @@
 
 > **Update ritual:** Before every coding session, re-read this file and `TASK_PROGRESS.md`, confirm the current phase is still correct, and adjust priorities if something changed. After every completed task, go update `TASK_PROGRESS.md` (not this file, unless the roadmap itself changed). This file changes when the *plan* changes; `TASK_PROGRESS.md` changes when *work happens*.
 
-**Last updated:** 2026-08-04 · **Current phase:** Phase 1 — Horizon 1 is functionally complete except S-7 (owner must rotate a committed credential — not fixable in-session). README written, test coverage extended, and a dedicated security review found and fixed one High-severity authorization bug in this session's own work (81 tests passing total). See `TASK_PROGRESS.md` for the live checklist and `ANALYSIS_REPORT.md` §14 for what changed and why. No commits made yet — awaiting owner review of the full diff before Horizon 2 (product features) begins.
+**Last updated:** 2026-08-04 · **Current phase:** Phase 1 — Horizon 1 **committed** (`5e6aef6`, branch `new-update`, not yet pushed) except S-7 (owner must rotate a committed credential — not fixable in-session). README written, test coverage extended, and a dedicated security review found and fixed one High-severity authorization bug in this session's own work (81 tests passing total, two review passes). See `TASK_PROGRESS.md` for the live checklist and `ANALYSIS_REPORT.md` §14 for what changed and why. Next: decide on pushing, rotate S-7, then start Horizon 2 (product features).
 
 ---
 

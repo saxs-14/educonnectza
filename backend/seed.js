@@ -81,8 +81,11 @@ const seedDatabase = async () => {
 
     console.log('Creating DevAdmin account in Firebase and MongoDB...');
     
-    const devAdminEmail = 'mamagauphathu@gmail.com';
-    const devAdminPassword = 'Phathutshedzo@14';
+    const devAdminEmail = process.env.DEV_ADMIN_EMAIL;
+    const devAdminPassword = process.env.DEV_ADMIN_PASSWORD;
+    if (!devAdminEmail || !devAdminPassword) {
+      throw new Error('Set DEV_ADMIN_EMAIL and DEV_ADMIN_PASSWORD in backend/.env before running the seed script.');
+    }
     let firebaseUid;
 
     try {
