@@ -81,6 +81,29 @@ test('getSystemAudit flags a critical teacher-to-learner ratio above 40:1 and de
   assert.equal(res.body.healthScore, 85);
 });
 
+test('getSystemAudit flags a critical staffing gap when there are active learners but zero active teachers, and deducts 15 points', async () => {
+  const school = await School.create({ name: 'Test High', uniqueCode: 'TH100GP', province: 'GP' });
+  for (let i = 0; i < 3; i++) {
+    await User.create({
+      schoolId: school._id, userCode: `TH1001${String(i).padStart(3, '0')}`, firebaseUid: `TH1001${i}-uid`, role: 'Learner', isActive: true,
+      fullNames: 'Learn', surname: `L${i}`, idNumber: `05010158000${String(i).padStart(2, '0')}`, dateOfBirth: '2005-01-01', grade: 9, email: `learner${i}@th.com`,
+    });
+  }
+  const req = {};
+  const res = mockRes();
+  const next = mockNext();
+
+  await getSystemAudit(req, res, next);
+
+  assert.equal(next.calls.length, 0, `unexpected error: ${next.calls[0]}`);
+  const insight = res.body.insights.find((i) => i.message.includes('no active teachers'));
+  assert.ok(insight, 'expected a no-active-teachers insight');
+  assert.equal(insight.type, 'critical');
+  assert.equal(insight.action, 'Scale Resources');
+  assert.equal(insight.message, '3 active learner(s) but no active teachers.');
+  assert.equal(res.body.healthScore, 85);
+});
+
 test('getSystemAudit deducts 2 points per orphaned reference and reports the count', async () => {
   const school = await School.create({ name: 'Test High', uniqueCode: 'TH100GP', province: 'GP' });
   const teacher = await User.create({

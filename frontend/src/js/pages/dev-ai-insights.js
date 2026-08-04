@@ -1,4 +1,5 @@
 import { api } from '../api.js';
+import { escapeHtml } from '../utils.js';
 
 const healthScoreEl = document.getElementById('healthScore');
 const healthCircle = document.getElementById('healthCircle');
@@ -50,8 +51,8 @@ function renderAudit(data) {
             <i class="fas ${icon} mt-1"></i>
             <div class="flex-1">
                 <p class="font-bold text-sm uppercase tracking-wider mb-1">${insight.type}</p>
-                <p class="text-sm font-medium">${insight.message}</p>
-                ${insight.action !== 'None' ? `<button class="mt-2 text-xs font-bold underline">${insight.action}</button>` : ''}
+                <p class="text-sm font-medium">${escapeHtml(insight.message)}</p>
+                ${insight.action !== 'None' ? `<button class="mt-2 text-xs font-bold underline">${escapeHtml(insight.action)}</button>` : ''}
             </div>
         `;
         insightsList.appendChild(div);
@@ -83,15 +84,20 @@ async function runDeepScan() {
 function renderDeepResults(data) {
     recommendationsSection.classList.remove('hidden');
     recommendationsList.innerHTML = '';
-    
+
+    const hasOrphans = data.summary.orphanRecords > 0;
+    const borderClass = hasOrphans ? 'border-l-amber-500' : 'border-l-indigo-600';
+    const iconWrapClass = hasOrphans ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600';
+    const iconClass = hasOrphans ? 'fa-triangle-exclamation' : 'fa-check';
+
     data.recommendations.forEach(rec => {
         const div = document.createElement('div');
-        div.className = 'glass-card p-5 rounded-2xl border-l-4 border-l-indigo-600 flex items-center gap-4';
+        div.className = `glass-card p-5 rounded-2xl border-l-4 ${borderClass} flex items-center gap-4`;
         div.innerHTML = `
-            <div class="bg-indigo-100 text-indigo-600 w-10 h-10 rounded-full flex items-center justify-center shrink-0">
-                <i class="fas fa-check"></i>
+            <div class="${iconWrapClass} w-10 h-10 rounded-full flex items-center justify-center shrink-0">
+                <i class="fas ${iconClass}"></i>
             </div>
-            <p class="text-slate-700 font-medium text-sm">${rec}</p>
+            <p class="text-slate-700 font-medium text-sm">${escapeHtml(rec)}</p>
         `;
         recommendationsList.appendChild(div);
     });

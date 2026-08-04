@@ -15,9 +15,12 @@ const ORPHAN_DEDUCTION_CAP = 30;
 export const getSystemAudit = asyncHandler(async (req, res) => {
   const activeLearners = await User.countDocuments({ role: 'Learner', isActive: true });
   const activeTeachers = await User.countDocuments({ role: 'Teacher', isActive: true });
-  const schools = await School.find();
-  const pendingSchools = schools.filter((s) => !s.isActive).length;
+  const pendingSchools = await School.countDocuments({ isActive: false });
   const teacherRatio = activeTeachers > 0 ? activeLearners / activeTeachers : 0;
+  // Shared with runDeepScan: runOrphanAudit() always computes the full breakdown,
+  // even though this endpoint only reads `total`. That's an accepted tradeoff at
+  // this app's current scale, not a real cost-saving optimization - there is no
+  // cheaper "count-only" path today.
   const { total: orphanTotal } = await runOrphanAudit();
 
   const insights = [];
@@ -36,6 +39,15 @@ export const getSystemAudit = asyncHandler(async (req, res) => {
     insights.push({
       type: 'critical',
       message: `Critical teacher-to-learner ratio detected (${teacherRatio.toFixed(1)}:1).`,
+      action: 'Scale Resources',
+    });
+    healthScore -= BAD_RATIO_DEDUCTION;
+  }
+
+  if (activeLearners > 0 && activeTeachers === 0) {
+    insights.push({
+      type: 'critical',
+      message: `${activeLearners} active learner(s) but no active teachers.`,
       action: 'Scale Resources',
     });
     healthScore -= BAD_RATIO_DEDUCTION;
@@ -67,10 +79,7 @@ export const runDeepScan = asyncHandler(async (req, res) => {
   const { total, breakdown } = await runOrphanAudit();
 
   const recommendations = breakdown.length > 0
-    ? breakdown.map(({ label, count }) => {
-        const [fromModel, toModel] = label.split(' → ');
-        return `${count} ${fromModel} record(s) have a dangling ${toModel} reference — review and reassign or delete them.`;
-      })
+    ? breakdown.map(({ from, to, count }) => `${count} ${from} record(s) have a dangling ${to} reference — review and reassign or delete them.`)
     : ['No issues found — referential integrity looks healthy.'];
 
   res.json({

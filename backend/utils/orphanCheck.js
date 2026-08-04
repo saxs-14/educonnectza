@@ -13,15 +13,18 @@ import QuizAttempt from '../models/QuizAttempt.js';
  * real document in `refModel`. A document where `field` is null/undefined is
  * never included - that's a legitimately unset optional reference, not a
  * dangling one. Uses a two-query set-diff instead of populate() per document,
- * so this stays cheap regardless of collection size.
+ * avoiding the N+1 query pattern that per-document populate() calls would
+ * cause. This still loads every referencing document's selected field into
+ * memory per call, so it is not free at large collection sizes - just cheaper
+ * than N+1.
  */
 export const findDanglingRefs = async ({ model, field, refModel }) => {
   const docs = await model.find({ [field]: { $ne: null } }).select(field);
   if (docs.length === 0) return [];
 
-  const referencedIds = docs.map((doc) => doc[field]);
+  const uniqueReferencedIds = [...new Map(docs.map((doc) => [doc[field].toString(), doc[field]])).values()];
   const existingIds = new Set(
-    (await refModel.find({ _id: { $in: referencedIds } }).select('_id')).map((doc) => doc._id.toString())
+    (await refModel.find({ _id: { $in: uniqueReferencedIds } }).select('_id')).map((doc) => doc._id.toString())
   );
 
   return docs.filter((doc) => !existingIds.has(doc[field].toString()));
@@ -42,7 +45,12 @@ export const runOrphanAudit = async () => {
   const results = await Promise.all(
     ORPHAN_CHECKS.map(async (check) => {
       const dangling = await findDanglingRefs(check);
-      return { label: check.label, count: dangling.length };
+      return {
+        label: check.label,
+        from: check.model.modelName,
+        to: check.refModel.modelName,
+        count: dangling.length,
+      };
     })
   );
   const breakdown = results.filter((r) => r.count > 0);

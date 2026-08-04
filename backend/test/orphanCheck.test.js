@@ -8,7 +8,7 @@ import User from '../models/User.js';
 import Quiz from '../models/Quiz.js';
 import Assignment from '../models/Assignment.js';
 import StudyGroup from '../models/StudyGroup.js';
-import { findDanglingRefs, runOrphanAudit } from '../utils/orphanCheck.js';
+import { findDanglingRefs, runOrphanAudit, ORPHAN_CHECKS } from '../utils/orphanCheck.js';
 
 before(connectTestDb);
 after(disconnectTestDb);
@@ -43,6 +43,27 @@ test('findDanglingRefs returns an empty array when every reference resolves', as
   const dangling = await findDanglingRefs({ model: Quiz, field: 'subjectId', refModel: Subject });
 
   assert.equal(dangling.length, 0);
+});
+
+test('findDanglingRefs deduplicates referenced ids before querying refModel', async () => {
+  const sameId = new mongoose.Types.ObjectId();
+  const docs = [{ subjectId: sameId }, { subjectId: sameId }, { subjectId: sameId }];
+  const refModelCalls = [];
+
+  const fakeModel = {
+    find: () => ({ select: async () => docs }),
+  };
+  const fakeRefModel = {
+    find: (query) => {
+      refModelCalls.push(query);
+      return { select: async () => [{ _id: sameId }] };
+    },
+  };
+
+  await findDanglingRefs({ model: fakeModel, field: 'subjectId', refModel: fakeRefModel });
+
+  assert.equal(refModelCalls.length, 1);
+  assert.equal(refModelCalls[0]._id.$in.length, 1, 'expected duplicate ids to be deduped before the $in query');
 });
 
 test('findDanglingRefs never flags a legitimately unset (null) reference field', async () => {
@@ -80,4 +101,34 @@ test('runOrphanAudit returns a zero total and empty breakdown for a clean databa
 
   assert.equal(total, 0);
   assert.deepEqual(breakdown, []);
+});
+
+test('runOrphanAudit breakdown entries carry structured from/to fields alongside label', async () => {
+  const { subject, teacher } = await seedSchoolSubjectTeacher();
+  const danglingSubjectId = new mongoose.Types.ObjectId();
+  await Quiz.create({ teacherId: teacher._id, subjectId: danglingSubjectId, title: 'Orphan Quiz', questions: [] });
+
+  const { breakdown } = await runOrphanAudit();
+
+  const quizEntry = breakdown.find((b) => b.label === 'Quiz → Subject');
+  assert.ok(quizEntry, 'expected a Quiz → Subject entry');
+  assert.equal(quizEntry.from, 'Quiz');
+  assert.equal(quizEntry.to, 'Subject');
+});
+
+test('every ORPHAN_CHECKS entry references a real schema path pointing at the declared refModel', async () => {
+  assert.equal(ORPHAN_CHECKS.length, 8);
+
+  for (const { model, field, refModel } of ORPHAN_CHECKS) {
+    const schemaPath = model.schema.path(field);
+    assert.ok(
+      schemaPath,
+      `expected ${model.modelName} schema to have a path named "${field}"`
+    );
+    assert.equal(
+      schemaPath.options.ref,
+      refModel.modelName,
+      `expected ${model.modelName}.${field} to ref ${refModel.modelName}, got ${schemaPath.options.ref}`
+    );
+  }
 });
