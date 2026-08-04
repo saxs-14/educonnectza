@@ -1,8 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import User from '../models/User.js';
 import School from '../models/School.js';
-import Subject from '../models/Subject.js';
-import Quiz from '../models/Quiz.js';
 import { runOrphanAudit } from '../utils/orphanCheck.js';
 
 const PENDING_SCHOOL_DEDUCTION = 5;
@@ -66,24 +64,19 @@ export const getSystemAudit = asyncHandler(async (req, res) => {
 // @desc    Run Deep AI DB Scan
 // @route   POST /api/ai/db-check
 export const runDeepScan = asyncHandler(async (req, res) => {
-  // Simulate a heavy operation
-  const subjects = await Subject.countDocuments();
-  const quizzes = await Quiz.countDocuments();
-  
-  const scanResults = {
+  const { total, breakdown } = await runOrphanAudit();
+
+  const recommendations = breakdown.length > 0
+    ? breakdown.map(({ label, count }) => {
+        const [fromModel, toModel] = label.split(' → ');
+        return `${count} ${fromModel} record(s) have a dangling ${toModel} reference — review and reassign or delete them.`;
+      })
+    : ['No issues found — referential integrity looks healthy.'];
+
+  res.json({
     status: 'success',
     timestamp: new Date(),
-    summary: {
-      integrityScore: 99.8,
-      orphanRecords: 12,
-      lastBackup: '2025-05-14T02:00:00Z'
-    },
-    recommendations: [
-      "Prune 12 orphan records in 'LearnerEnrollment' collection.",
-      "Optimize indexing for 'userCode' field in User collection.",
-      "Backup required for 'AcademicContent' before next sync."
-    ]
-  };
-  
-  res.json(scanResults);
+    summary: { orphanRecords: total, breakdown },
+    recommendations,
+  });
 });

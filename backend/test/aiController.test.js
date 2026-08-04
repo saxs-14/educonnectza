@@ -6,7 +6,7 @@ import { mockRes, mockNext } from '../testUtils/httpMocks.js';
 import School from '../models/School.js';
 import User from '../models/User.js';
 import Quiz from '../models/Quiz.js';
-import { getSystemAudit } from '../controllers/aiController.js';
+import { getSystemAudit, runDeepScan } from '../controllers/aiController.js';
 
 before(connectTestDb);
 after(disconnectTestDb);
@@ -101,4 +101,45 @@ test('getSystemAudit deducts 2 points per orphaned reference and reports the cou
   assert.ok(insight);
   assert.equal(insight.action, 'Run Deep Scan');
   assert.equal(res.body.healthScore, 98);
+});
+
+test('runDeepScan returns a clean "no issues" recommendation when the database has no dangling references', async () => {
+  const req = {};
+  const res = mockRes();
+  const next = mockNext();
+
+  await runDeepScan(req, res, next);
+
+  assert.equal(next.calls.length, 0, `unexpected error: ${next.calls[0]}`);
+  assert.equal(res.body.status, 'success');
+  assert.equal(res.body.summary.orphanRecords, 0);
+  assert.deepEqual(res.body.summary.breakdown, []);
+  assert.deepEqual(res.body.recommendations, ['No issues found — referential integrity looks healthy.']);
+  assert.equal(res.body.summary.integrityScore, undefined);
+  assert.equal(res.body.summary.lastBackup, undefined);
+});
+
+test('runDeepScan reports a real breakdown and recommendation text generated from actual findings', async () => {
+  const school = await School.create({ name: 'Test High', uniqueCode: 'TH100GP', province: 'GP' });
+  const teacher = await User.create({
+    schoolId: school._id, userCode: 'TH100T1GP', firebaseUid: 'TH100T1GP-uid', role: 'Teacher',
+    fullNames: 'Teach', surname: 'One', idNumber: '8001015800087', dateOfBirth: '1980-01-01', email: 'teacher@th.com',
+  });
+  const danglingSubjectId = new mongoose.Types.ObjectId();
+  await Quiz.create({ teacherId: teacher._id, subjectId: danglingSubjectId, title: 'Orphan Quiz 1', questions: [] });
+  await Quiz.create({ teacherId: teacher._id, subjectId: danglingSubjectId, title: 'Orphan Quiz 2', questions: [] });
+
+  const req = {};
+  const res = mockRes();
+  const next = mockNext();
+
+  await runDeepScan(req, res, next);
+
+  assert.equal(next.calls.length, 0, `unexpected error: ${next.calls[0]}`);
+  assert.equal(res.body.summary.orphanRecords, 2);
+  assert.equal(res.body.summary.breakdown.length, 1);
+  assert.equal(res.body.summary.breakdown[0].label, 'Quiz → Subject');
+  assert.equal(res.body.summary.breakdown[0].count, 2);
+  assert.equal(res.body.recommendations.length, 1);
+  assert.match(res.body.recommendations[0], /2 Quiz record\(s\) have a dangling Subject reference/);
 });
