@@ -95,7 +95,4 @@ function renderDeepResults(data) {
         `;
         recommendationsList.appendChild(div);
     });
-    
-    // Add a success alert
-    alert('AI Deep Scan Complete. 0 critical security vulnerabilities found. 3 optimizations recommended.');
 }
