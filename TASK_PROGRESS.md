@@ -2,8 +2,8 @@
 
 > Update this file after every completed task: check items off, log what changed, note new blockers, and set the "Next session should start here" pointer. This is the file to read first when resuming work.
 
-**Last updated:** 2026-08-04 (Horizon 2 item 1 — real AI Insights — shipped)
-**Current phase:** Phase 1 (Horizon 1) is done and committed but **not yet pushed** — `new-update` is 5 commits ahead of `origin/new-update`, which is still at `5491a39`. **Horizon 2 item 1 (replace mocked "AI Insights" with real analysis) is now done**, committed across four commits (`8c38f65`..`a831fc2`, see Completed below) plus this living-docs update. 86 backend + 7 frontend = 93 automated tests passing; `firestore.rules`/`storage.rules` are still hand-reviewed only (no Firebase emulator available). Next: remaining Horizon 2 items (Parent Dashboard, Study Planner, APS Calculator, Notification Center) — see `PROJECT_PLAN.md` §5.
+**Last updated:** 2026-08-04 (Horizon 2 item 1 — real AI Insights — shipped, reviewed, merged, pushed)
+**Current phase:** Horizon 1 and Horizon 2 item 1 are both done. Built via full brainstorming → design spec → implementation plan → subagent-driven development (5 tasks, each with an independent implementer + task-scoped reviewer) → whole-branch review → fix round → re-review cycle (see `docs/superpowers/specs/2026-08-04-ai-insights-design.md` and `docs/superpowers/plans/2026-08-04-ai-insights.md`). The whole-branch review caught a real cross-task bug (a fragile label-parsing contract between two tasks) that no single task's review could have seen — now fixed. `new-update` merged into `master` locally (fast-forward, tests reverified post-merge) and **pushed to `origin/new-update`** (now at `e518105`). `master` has no remote counterpart in this repo (`origin` only has `new-update`) — the merge is local-only unless/until asked to push it too. 90 backend + 7 frontend = 97 automated tests passing; `firestore.rules`/`storage.rules` are still hand-reviewed only (no Firebase emulator available).
 
 ---
 
@@ -13,7 +13,7 @@
 
 ## Next Session Should Start Here
 
-Horizon 2 item 1 (real AI Insights) is done — see Completed below. Pick up with item 2 of `PROJECT_PLAN.md` §5's Horizon 2 table (Parent Dashboard, Study Planner, APS Calculator, or Notification Center — no priority order set yet among them). Also still outstanding, independent of Horizon 2: pushing `new-update` to `origin` (never done automatically, per Git Policy).
+Both Horizon 1 and Horizon 2 item 1 are done, merged, and pushed. Pick up with item 2 of `PROJECT_PLAN.md` §5's Horizon 2 table (Parent Dashboard, Study Planner, APS Calculator, or Notification Center — no priority order set yet among them; ask the project owner which one). One open question from this session, not yet answered: whether `master` should also be pushed to `origin` (it doesn't exist there today — would be a new remote branch, not just an update).
 
 ---
 
