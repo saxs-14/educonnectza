@@ -50,7 +50,7 @@ function renderAudit(data) {
         div.innerHTML = `
             <i class="fas ${icon} mt-1"></i>
             <div class="flex-1">
-                <p class="font-bold text-sm uppercase tracking-wider mb-1">${insight.type}</p>
+                <p class="font-bold text-sm uppercase tracking-wider mb-1">${escapeHtml(insight.type)}</p>
                 <p class="text-sm font-medium">${escapeHtml(insight.message)}</p>
                 ${insight.action !== 'None' ? `<button class="mt-2 text-xs font-bold underline">${escapeHtml(insight.action)}</button>` : ''}
             </div>
