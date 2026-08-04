@@ -2,7 +2,7 @@
   "name": "EduConnectZA",
   "short_name": "EduConnect",
   "description": "Learning Management System for South African High Schools",
-  "start_url": "/dashboard.html",
+  "start_url": "/index.html",
   "display": "standalone",
   "background_color": "#1e3a8a",
   "theme_color": "#1e3a8a",

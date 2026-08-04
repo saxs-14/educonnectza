@@ -1,8 +1,15 @@
 rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
+    // Firebase Storage is not currently used by EduConnectZA - all file
+    // uploads (profile pictures, assignment submissions, study materials,
+    // school logos) go through the Express backend to local disk via multer
+    // (see backend/middleware/uploadMiddleware.js), not this bucket. Deny by
+    // default rather than leave every authenticated user able to read/write
+    // every file, so a future integration doesn't inherit an open bucket.
+    // Replace with real, path-scoped rules if/when this bucket is adopted.
     match /{allPaths=**} {
-      allow read, write: if request.auth != null;
+      allow read, write: if false;
     }
   }
 }

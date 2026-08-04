@@ -3,6 +3,8 @@ import User from '../models/User.js';
 import School from '../models/School.js';
 import { generateLearnerCode, generateTeacherCode } from '../utils/generateCodes.js';
 import bcrypt from 'bcryptjs';
+import { hashPassword } from '../utils/hashPassword.js';
+import { auth } from '../config/firebase.js';
 
 // @desc    Get all users (filtered by role, school, grade)
 // @route   GET /api/users
@@ -106,19 +108,40 @@ export const createUser = asyncHandler(async (req, res) => {
     throw new Error('Invalid role');
   }
 
-  const user = await User.create({
-    schoolId: targetSchoolId,
-    userCode,
-    role,
-    fullNames,
-    surname,
-    idNumber,
-    dateOfBirth,
-    grade: role === 'Learner' ? grade : null,
-    email,
-    passwordHash: password,
-    profilePictureUrl: req.file?.path || '',
-  });
+  // Admin-created accounts have no client-side Firebase signup step (unlike
+  // self-registration), so the backend has to provision the Firebase Auth
+  // account itself before it can set a real firebaseUid on the Mongo profile.
+  let firebaseUser;
+  try {
+    firebaseUser = await auth.createUser({ email, password, displayName: `${fullNames} ${surname}` });
+  } catch (error) {
+    res.status(400);
+    throw new Error(`Failed to create Firebase account: ${error.message}`);
+  }
+
+  const passwordHash = await hashPassword(password);
+
+  let user;
+  try {
+    user = await User.create({
+      firebaseUid: firebaseUser.uid,
+      schoolId: targetSchoolId,
+      userCode,
+      role,
+      fullNames,
+      surname,
+      idNumber,
+      dateOfBirth,
+      grade: role === 'Learner' ? grade : null,
+      email,
+      passwordHash,
+      profilePictureUrl: req.file?.path || '',
+    });
+  } catch (error) {
+    // Don't leave an orphaned Firebase account behind if the Mongo profile couldn't be saved.
+    await auth.deleteUser(firebaseUser.uid).catch(() => {});
+    throw error;
+  }
 
   res.status(201).json({
     _id: user._id,
@@ -170,6 +193,7 @@ export const deleteUser = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('User not found');
   }
+  await auth.deleteUser(user.firebaseUid).catch(() => {});
   await user.deleteOne();
   res.json({ message: 'User removed' });
 });
@@ -190,6 +214,14 @@ export const resetUserPassword = asyncHandler(async (req, res) => {
   if (req.user.role === 'SchoolAdmin' && user.schoolId.toString() !== req.user.schoolId.toString()) {
     res.status(403);
     throw new Error('Not authorized');
+  }
+  // Firebase is the actual login credential store - updating Mongo's passwordHash
+  // alone would leave the user unable to log in with the "reset" password.
+  try {
+    await auth.updateUser(user.firebaseUid, { password: newPassword });
+  } catch (error) {
+    res.status(400);
+    throw new Error(`Failed to update Firebase password: ${error.message}`);
   }
   const salt = await bcrypt.genSalt(10);
   user.passwordHash = await bcrypt.hash(newPassword, salt);

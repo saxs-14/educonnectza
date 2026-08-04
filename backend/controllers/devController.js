@@ -71,11 +71,21 @@ export const getDatabaseInfo = asyncHandler(async (req, res) => {
     res.json(stats);
 });
 
+// Fields that must never leave this endpoint, regardless of which collection
+// they're found in. The native driver bypasses Mongoose's `select: false`,
+// so redaction has to happen here rather than relying on the schema.
+const SENSITIVE_FIELDS = ['passwordHash', 'mfaSecret', 'resetPasswordToken', 'resetPasswordExpire'];
+
 // @desc    Get records from a collection
 // @route   GET /api/dev/db/:collection
 // @access  Private/DevAdmin
 export const getCollectionRecords = asyncHandler(async (req, res) => {
     const { collection } = req.params;
     const records = await mongoose.connection.db.collection(collection).find().limit(50).toArray();
-    res.json(records);
+    const redacted = records.map((doc) => {
+        const clean = { ...doc };
+        for (const field of SENSITIVE_FIELDS) delete clean[field];
+        return clean;
+    });
+    res.json(redacted);
 });

@@ -1,4 +1,5 @@
 import { api } from '../api.js';
+import { escapeHtml } from '../utils.js';
 
 const contentTableBody = document.getElementById('contentTableBody');
 const addContentBtn = document.getElementById('addContentBtn');
@@ -63,24 +64,24 @@ function renderContent(content) {
 
         row.innerHTML = `
             <td class="px-6 py-4">
-                <p class="font-bold text-slate-900">${item.title}</p>
-                <p class="text-[10px] text-slate-400 font-mono">${item._id}</p>
+                <p class="font-bold text-slate-900">${escapeHtml(item.title)}</p>
+                <p class="text-[10px] text-slate-400 font-mono">${escapeHtml(item._id)}</p>
             </td>
             <td class="px-6 py-4">
                 <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${typeColors[item.type] || 'bg-slate-100'}">
-                    ${item.type}
+                    ${escapeHtml(item.type)}
                 </span>
             </td>
             <td class="px-6 py-4 text-sm">
-                <span class="font-bold text-slate-700">Gr ${item.grade}</span> • ${item.subject}
+                <span class="font-bold text-slate-700">Gr ${escapeHtml(item.grade)}</span> • ${escapeHtml(item.subject)}
             </td>
             <td class="px-6 py-4">
                 <span class="flex items-center gap-2 text-xs font-bold text-emerald-600">
-                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span> ${item.status}
+                    <span class="h-2 w-2 rounded-full bg-emerald-500"></span> ${escapeHtml(item.status)}
                 </span>
             </td>
             <td class="px-6 py-4 text-right">
-                <a href="${item.url}" target="_blank" class="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition" title="View Link"><i class="fas fa-external-link-alt"></i></a>
+                <a href="${escapeHtml(item.url)}" target="_blank" class="p-2 hover:bg-blue-50 text-blue-600 rounded-lg transition" title="View Link"><i class="fas fa-external-link-alt"></i></a>
                 <button class="p-2 hover:bg-rose-50 text-rose-600 rounded-lg transition" title="Delete"><i class="fas fa-trash-alt"></i></button>
             </td>
         `;

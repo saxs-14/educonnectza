@@ -3,11 +3,18 @@ import Assignment from '../models/Assignment.js';
 import Submission from '../models/Submission.js';
 import LearnerEnrollment from '../models/LearnerEnrollment.js';
 import TeacherAllocation from '../models/TeacherAllocation.js';
+import Subject from '../models/Subject.js';
+import { isSameSchool } from '../utils/authz.js';
 import fs from 'fs';
 
 // @desc    Create assignment (Teacher)
 export const createAssignment = asyncHandler(async (req, res) => {
   const { subjectId, classId, title, description, dueDate, tierLevel } = req.body;
+  const subject = await Subject.findById(subjectId);
+  if (!subject) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
   // Verify teacher teaches this subject/class
   const allocationQuery = { teacherId: req.user._id, subjectId };
   if (classId) allocationQuery.classId = classId;
@@ -62,11 +69,19 @@ export const getAssignments = asyncHandler(async (req, res) => {
 // @desc    Get single assignment
 export const getAssignmentById = asyncHandler(async (req, res) => {
   const assignment = await Assignment.findById(req.params.id)
-    .populate('subjectId', 'name')
+    .populate('subjectId', 'name schoolId')
     .populate('teacherId', 'fullNames surname');
   if (!assignment) {
     res.status(404);
     throw new Error('Assignment not found');
+  }
+  if (!assignment.subjectId) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
+  if (!isSameSchool(req.user, assignment.subjectId.schoolId)) {
+    res.status(403);
+    throw new Error('Not authorized to access this assignment');
   }
   res.json(assignment);
 });
@@ -118,6 +133,19 @@ export const submitAssignment = asyncHandler(async (req, res) => {
   const assignmentId = req.params.id;
   const learnerId = req.user._id;
   const { textAnswer } = req.body;
+  const assignment = await Assignment.findById(assignmentId).populate('subjectId', 'schoolId');
+  if (!assignment) {
+    res.status(404);
+    throw new Error('Assignment not found');
+  }
+  if (!assignment.subjectId) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
+  if (!isSameSchool(req.user, assignment.subjectId.schoolId)) {
+    res.status(403);
+    throw new Error('Not authorized to submit to this assignment');
+  }
   const existing = await Submission.findOne({ assignmentId, learnerId });
   if (existing) {
     res.status(400);

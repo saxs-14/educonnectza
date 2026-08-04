@@ -1,5 +1,6 @@
 import { api } from '../api.js';
 import { auth } from '../firebase.js';
+import { escapeHtml } from '../utils.js';
 
 // --- State ---
 let schools = [];
@@ -22,14 +23,11 @@ const pendingSchoolsList = document.getElementById('pendingSchoolsList');
 
 // --- Initialization ---
 document.addEventListener('DOMContentLoaded', async () => {
-    // Check Auth
+    // Check Auth (UX gate only - the real enforcement is server-side per request)
     const user = JSON.parse(localStorage.getItem('user'));
     if (!user || user.role !== 'DevAdmin') {
-        // Extra check for the developer email
-        if (!user || user.email !== 'mamagauphathu@gmail.com') {
-            window.location.href = 'index.html';
-            return;
-        }
+        window.location.href = 'index.html';
+        return;
     }
 
     setupTabs();
@@ -111,8 +109,8 @@ function renderPendingSchools() {
         div.className = 'flex justify-between items-center bg-slate-50 p-3 rounded-xl';
         div.innerHTML = `
             <div>
-                <p class="font-medium">${school.name}</p>
-                <p class="text-xs text-slate-500">Code: ${school.uniqueCode} • applied recently</p>
+                <p class="font-medium">${escapeHtml(school.name)}</p>
+                <p class="text-xs text-slate-500">Code: ${escapeHtml(school.uniqueCode)} • applied recently</p>
             </div>
             <div class="flex gap-2">
                 <button class="approve-btn bg-green-100 text-green-700 px-3 py-1 rounded-lg text-xs font-bold" data-id="${school._id}">Approve</button>

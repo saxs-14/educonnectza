@@ -7,11 +7,19 @@ import { auth } from '../config/firebase.js';
 // @desc    Register a new user (Learner/Teacher)
 // @route   POST /api/auth/register
 export const registerUser = asyncHandler(async (req, res) => {
-  const { firebaseUid, schoolCode, role, fullNames, surname, idNumber, dateOfBirth, grade, email } = req.body;
+  const { firebaseUid, schoolCode, role, fullNames, surname, idNumber, dateOfBirth, grade, email, parentConsent } = req.body;
 
   if (!firebaseUid) {
     res.status(400);
     throw new Error('Firebase UID is required');
+  }
+
+  // POPIA requires parental/guardian consent before processing a minor's data.
+  // Learners (grades 8-12) are treated as minors for this purpose.
+  const hasParentConsent = parentConsent === true || parentConsent === 'true';
+  if (role === 'Learner' && !hasParentConsent) {
+    res.status(400);
+    throw new Error('Parent or guardian consent is required to register as a learner');
   }
 
   // Verify the user exists in Firebase
@@ -55,6 +63,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     dateOfBirth,
     grade: role === 'Learner' ? grade : null,
     email,
+    parentConsent: hasParentConsent,
     profilePictureUrl: req.file ? `/uploads/profiles/${req.file.filename}` : (req.body.profilePictureUrl || ''),
   });
 

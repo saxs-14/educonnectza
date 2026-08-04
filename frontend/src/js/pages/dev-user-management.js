@@ -1,4 +1,5 @@
 import { api } from '../api.js';
+import { escapeHtml } from '../utils.js';
 
 const userTableBody = document.getElementById('userTableBody');
 const userSearch = document.getElementById('userSearch');
@@ -33,7 +34,7 @@ async function fetchUsers() {
         updateStats();
     } catch (err) {
         console.error('Failed to fetch users:', err);
-        userTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-red-500">Error loading users: ${err.message}</td></tr>`;
+        userTableBody.innerHTML = `<tr><td colspan="5" class="px-6 py-10 text-center text-red-500">Error loading users: ${escapeHtml(err.message)}</td></tr>`;
     }
 }
 
@@ -60,21 +61,21 @@ function renderUsers(users) {
             <td class="px-6 py-4">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 font-bold">
-                        ${user.fullNames ? user.fullNames[0] : '?'}
+                        ${user.fullNames ? escapeHtml(user.fullNames[0]) : '?'}
                     </div>
                     <div>
-                        <p class="font-bold text-slate-900">${user.fullNames} ${user.surname}</p>
-                        <p class="text-xs text-slate-500">${user.email}</p>
+                        <p class="font-bold text-slate-900">${escapeHtml(user.fullNames)} ${escapeHtml(user.surname)}</p>
+                        <p class="text-xs text-slate-500">${escapeHtml(user.email)}</p>
                     </div>
                 </div>
             </td>
             <td class="px-6 py-4">
                 <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${roleColors[user.role] || 'bg-slate-100'}">
-                    ${user.role}
+                    ${escapeHtml(user.role)}
                 </span>
             </td>
             <td class="px-6 py-4 text-sm text-slate-600 font-medium">
-                ${user.schoolId?.name || 'N/A'}
+                ${escapeHtml(user.schoolId?.name) || 'N/A'}
             </td>
             <td class="px-6 py-4">
                 <div class="flex items-center gap-2">

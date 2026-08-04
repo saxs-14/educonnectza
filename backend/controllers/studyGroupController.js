@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import StudyGroup from '../models/StudyGroup.js';
+import { isSameSchool } from '../utils/authz.js';
 import mongoose from 'mongoose';
 
 // @desc    Create study group (Learner)
@@ -39,6 +40,10 @@ export const getGroupById = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Group not found');
   }
+  if (!isSameSchool(req.user, group.schoolId)) {
+    res.status(403);
+    throw new Error('Not authorized to access this group');
+  }
   res.json(group);
 });
 
@@ -48,6 +53,10 @@ export const joinGroup = asyncHandler(async (req, res) => {
   if (!group) {
     res.status(404);
     throw new Error('Group not found');
+  }
+  if (!isSameSchool(req.user, group.schoolId)) {
+    res.status(403);
+    throw new Error('Not authorized to join this group');
   }
   if (group.members.includes(req.user._id)) {
     res.status(400);
@@ -85,7 +94,9 @@ export const deleteGroup = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Group not found');
   }
-  if (group.createdBy.toString() !== req.user._id.toString() && !['Teacher', 'SchoolAdmin'].includes(req.user.role)) {
+  const isCreator = group.createdBy.toString() === req.user._id.toString();
+  const isSchoolStaff = ['Teacher', 'SchoolAdmin'].includes(req.user.role) && isSameSchool(req.user, group.schoolId);
+  if (!isCreator && !isSchoolStaff) {
     res.status(403);
     throw new Error('Not authorized');
   }

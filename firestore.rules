@@ -11,19 +11,11 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role;
     }
     
-    // ---------- Dev‑admin by email ----------
-    function isDevAdminEmail() {
-      // The request.auth token always contains the signed‑in user's e‑mail.
-      return request.auth != null && request.auth.token.email == 'mamagauphathu@gmail.com';
-    }
-
-    // Update the existing isDevAdmin() helper to also accept the email shortcut.
     function isDevAdmin() {
-      // Either the user document has role = 'devAdmin' OR the e‑mail matches.
-      return isAuthenticated() && (
-        getUserRole() == 'devAdmin' ||
-        isDevAdminEmail()
-      );
+      // Role comes solely from the user's own Firestore document - no
+      // hardcoded-identity shortcuts. Set via the DevAdmin bootstrap script
+      // (scripts/init-dev-admin.mjs), which writes role: 'devAdmin' there.
+      return isAuthenticated() && getUserRole() == 'devAdmin';
     }
     
     function isSchoolAdmin() {

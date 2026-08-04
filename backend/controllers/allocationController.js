@@ -32,6 +32,11 @@ export const allocateTeacher = asyncHandler(async (req, res) => {
     res.status(400);
     throw new Error('Teacher not found in this school');
   }
+  const subject = await Subject.findById(subjectId);
+  if (!subject) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
   const existing = await TeacherAllocation.findOne({ teacherId, subjectId, classId });
   if (existing) {
     res.status(400);
@@ -62,6 +67,11 @@ export const enrollLearner = asyncHandler(async (req, res) => {
   if (!learner) {
     res.status(400);
     throw new Error('Learner not found');
+  }
+  const subject = await Subject.findById(subjectId);
+  if (!subject) {
+    res.status(404);
+    throw new Error('Subject not found');
   }
   const existing = await LearnerEnrollment.findOne({ learnerId, subjectId, classId });
   if (existing) {

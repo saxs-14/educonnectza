@@ -1,8 +1,15 @@
 import asyncHandler from 'express-async-handler';
 import CalendarEvent from '../models/CalendarEvent.js';
+import { isSameSchool } from '../utils/authz.js';
+
+const EVENT_CREATOR_ROLES = ['Teacher', 'SchoolAdmin', 'DevAdmin'];
 
 // @desc    Create event
 export const createEvent = asyncHandler(async (req, res) => {
+  if (!EVENT_CREATOR_ROLES.includes(req.user.role)) {
+    res.status(403);
+    throw new Error('Not authorized to create calendar events');
+  }
   const { title, description, startDate, endDate, eventType, targetFilters, meetingLink } = req.body;
   const event = await CalendarEvent.create({
     schoolId: req.user.schoolId,
@@ -50,7 +57,9 @@ export const updateEvent = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Event not found');
   }
-  if (event.creatorId.toString() !== req.user._id.toString() && req.user.role !== 'SchoolAdmin') {
+  const isOwner = event.creatorId.toString() === req.user._id.toString();
+  const isSchoolAdminForThisSchool = req.user.role === 'SchoolAdmin' && isSameSchool(req.user, event.schoolId);
+  if (!isOwner && !isSchoolAdminForThisSchool) {
     res.status(403);
     throw new Error('Not authorized');
   }
@@ -71,7 +80,9 @@ export const deleteEvent = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('Event not found');
   }
-  if (event.creatorId.toString() !== req.user._id.toString() && req.user.role !== 'SchoolAdmin') {
+  const isOwner = event.creatorId.toString() === req.user._id.toString();
+  const isSchoolAdminForThisSchool = req.user.role === 'SchoolAdmin' && isSameSchool(req.user, event.schoolId);
+  if (!isOwner && !isSchoolAdminForThisSchool) {
     res.status(403);
     throw new Error('Not authorized');
   }

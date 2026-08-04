@@ -1,4 +1,5 @@
 import { api } from '../api.js';
+import { escapeHtml } from '../utils.js';
 
 const schoolGrid = document.getElementById('schoolGrid');
 const addSchoolBtn = document.getElementById('addSchoolBtn');
@@ -38,7 +39,7 @@ async function fetchSchools() {
         renderSchools(schools);
     } catch (err) {
         console.error('Failed to fetch schools:', err);
-        schoolGrid.innerHTML = `<div class="col-span-full text-center py-20 text-red-500">Error loading schools: ${err.message}</div>`;
+        schoolGrid.innerHTML = `<div class="col-span-full text-center py-20 text-red-500">Error loading schools: ${escapeHtml(err.message)}</div>`;
     }
 }
 
@@ -59,22 +60,22 @@ function renderSchools(schools) {
 
         card.innerHTML = `
             <div class="flex justify-between items-start mb-6">
-                <img src="${logo}" class="h-12 w-auto object-contain rounded-lg">
+                <img src="${escapeHtml(logo)}" class="h-12 w-auto object-contain rounded-lg">
                 <span class="px-3 py-1 rounded-full text-[10px] font-bold uppercase ${school.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'}">
                     ${school.isActive ? 'Active' : 'Pending'}
                 </span>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-1">${school.name}</h3>
-            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4"><i class="fas fa-map-marker-alt mr-1"></i> ${school.province} Region</p>
-            
+            <h3 class="text-xl font-bold text-slate-900 mb-1">${escapeHtml(school.name)}</h3>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4"><i class="fas fa-map-marker-alt mr-1"></i> ${escapeHtml(school.province)} Region</p>
+
             <div class="mt-auto space-y-3 pt-4 border-t border-slate-100">
                 <div class="flex justify-between text-xs font-medium">
                     <span class="text-slate-400">Unique Code:</span>
-                    <span class="text-slate-900 font-bold">${school.uniqueCode}</span>
+                    <span class="text-slate-900 font-bold">${escapeHtml(school.uniqueCode)}</span>
                 </div>
                 <div class="flex justify-between text-xs font-medium">
                     <span class="text-slate-400">Subscription:</span>
-                    <span class="text-blue-600 font-bold uppercase">${school.subscriptionTier || 'Basic'}</span>
+                    <span class="text-blue-600 font-bold uppercase">${escapeHtml(school.subscriptionTier) || 'Basic'}</span>
                 </div>
                 <div class="flex gap-2 pt-2">
                     <button class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2 rounded-xl text-xs font-bold transition">Settings</button>

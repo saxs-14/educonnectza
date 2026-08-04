@@ -3,10 +3,17 @@ import Quiz from '../models/Quiz.js';
 import QuizAttempt from '../models/QuizAttempt.js';
 import TeacherAllocation from '../models/TeacherAllocation.js';
 import LearnerEnrollment from '../models/LearnerEnrollment.js';
+import Subject from '../models/Subject.js';
+import { isSameSchool } from '../utils/authz.js';
 
 // @desc    Create quiz (Teacher)
 export const createQuiz = asyncHandler(async (req, res) => {
   const { subjectId, classId, title, questions, dueDate } = req.body;
+  const subject = await Subject.findById(subjectId);
+  if (!subject) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
   const allocation = await TeacherAllocation.findOne({ teacherId: req.user._id, subjectId });
   if (!allocation) {
     res.status(403);
@@ -52,10 +59,20 @@ export const getQuizzes = asyncHandler(async (req, res) => {
 
 // @desc    Get single quiz by ID
 export const getQuizById = asyncHandler(async (req, res) => {
-  const quiz = await Quiz.findById(req.params.id).populate('subjectId', 'name');
+  const quiz = await Quiz.findById(req.params.id).populate('subjectId', 'name schoolId');
   if (!quiz) {
     res.status(404);
     throw new Error('Quiz not found');
+  }
+  if (!quiz.subjectId) {
+    // subjectId didn't resolve (dangling reference) - never treat this the
+    // same as a legitimately global, schoolId-less Subject.
+    res.status(404);
+    throw new Error('Subject not found');
+  }
+  if (!isSameSchool(req.user, quiz.subjectId.schoolId)) {
+    res.status(403);
+    throw new Error('Not authorized to access this quiz');
   }
   // For learners, don't send correct answers unless attempted
   if (req.user.role === 'Learner') {
@@ -107,10 +124,18 @@ export const deleteQuiz = asyncHandler(async (req, res) => {
 
 // @desc    Take quiz (Learner) - get questions without answers
 export const takeQuiz = asyncHandler(async (req, res) => {
-  const quiz = await Quiz.findById(req.params.id);
+  const quiz = await Quiz.findById(req.params.id).populate('subjectId', 'schoolId');
   if (!quiz) {
     res.status(404);
     throw new Error('Quiz not found');
+  }
+  if (!quiz.subjectId) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
+  if (!isSameSchool(req.user, quiz.subjectId.schoolId)) {
+    res.status(403);
+    throw new Error('Not authorized to access this quiz');
   }
   const attempt = await QuizAttempt.findOne({ quizId: quiz._id, learnerId: req.user._id });
   if (attempt) {
@@ -127,10 +152,18 @@ export const takeQuiz = asyncHandler(async (req, res) => {
 // @desc    Submit quiz answers (Learner)
 export const submitQuiz = asyncHandler(async (req, res) => {
   const { answers } = req.body;
-  const quiz = await Quiz.findById(req.params.id);
+  const quiz = await Quiz.findById(req.params.id).populate('subjectId', 'schoolId');
   if (!quiz) {
     res.status(404);
     throw new Error('Quiz not found');
+  }
+  if (!quiz.subjectId) {
+    res.status(404);
+    throw new Error('Subject not found');
+  }
+  if (!isSameSchool(req.user, quiz.subjectId.schoolId)) {
+    res.status(403);
+    throw new Error('Not authorized to access this quiz');
   }
   const existing = await QuizAttempt.findOne({ quizId: quiz._id, learnerId: req.user._id });
   if (existing) {

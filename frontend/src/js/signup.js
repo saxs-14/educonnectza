@@ -7,6 +7,7 @@ const schoolCodeInput = document.getElementById('schoolCode');
 const schoolNameP = document.getElementById('school-name');
 const roleSelect = document.getElementById('role');
 const gradeField = document.getElementById('grade-field');
+const parentConsentCheckbox = document.getElementById('parentConsent');
 const form = document.getElementById('signup-form');
 const errorDiv = document.getElementById('error-message');
 const spinner = document.getElementById('signup-spinner');
@@ -40,7 +41,9 @@ schoolCodeInput.addEventListener('blur', async () => {
 });
 
 roleSelect.addEventListener('change', () => {
-  gradeField.classList.toggle('hidden', roleSelect.value !== 'Learner');
+  const isLearner = roleSelect.value === 'Learner';
+  gradeField.classList.toggle('hidden', !isLearner);
+  parentConsentCheckbox.required = isLearner;
 });
 
 form.addEventListener('submit', async (e) => {
@@ -53,6 +56,10 @@ form.addEventListener('submit', async (e) => {
   
   if (password.length < 6) {
     showError('Password must be at least 6 characters');
+    return;
+  }
+  if (role === 'Learner' && !formData.get('parentConsent')) {
+    showError('Parent or guardian consent is required to register as a learner');
     return;
   }
   setLoading(true);
@@ -70,17 +77,13 @@ form.addEventListener('submit', async (e) => {
     // Successful registration – store user data and redirect based on role
     localStorage.setItem('user', JSON.stringify(data));
     
-    let targetPage = 'dashboard.html';
+    let targetPage = 'index.html'; // fallback: unrecognized role, send back to login
     if (data.role === 'SchoolAdmin') {
       targetPage = 'school-admin-dashboard.html';
     } else if (data.role === 'Teacher') {
       targetPage = 'teacher-dashboard.html';
     } else if (data.role === 'Learner') {
       targetPage = 'learner-dashboard.html';
-    }
-
-    if (email === 'mamagauphathu@gmail.com') {
-      targetPage = 'dev-admin-dashboard.html';
     }
 
     window.location.href = targetPage;

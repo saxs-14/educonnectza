@@ -35,8 +35,8 @@ form.addEventListener('submit', async (e) => {
     if (response.ok) {
       localStorage.setItem('user', JSON.stringify(data));
       
-      // DEV ADMIN shortcut – immediate redirect if this is the dev admin email
-      if (user.email === 'mamagauphathu@gmail.com') {
+      // DevAdmins go straight to the dev console, based on role - not a hardcoded email.
+      if (data.role === 'DevAdmin') {
         window.location.href = 'dev-admin-dashboard.html';
         return;
       }
@@ -47,7 +47,7 @@ form.addEventListener('submit', async (e) => {
       
       // Determine target dashboard based on user role
       const role = data.role;
-      let targetPage = 'dashboard.html'; // fallback
+      let targetPage = 'index.html'; // fallback: unrecognized role, send back to login
       if (role === 'SchoolAdmin') {
         targetPage = 'school-admin-dashboard.html';
       } else if (role === 'Teacher') {

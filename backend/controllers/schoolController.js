@@ -6,6 +6,7 @@ import Subject from '../models/Subject.js';
 import TeacherAllocation from '../models/TeacherAllocation.js';
 import LearnerEnrollment from '../models/LearnerEnrollment.js';
 import { generateSchoolCode } from '../utils/generateCodes.js';
+import { isSameSchool } from '../utils/authz.js';
 import mongoose from 'mongoose';
 import { parse } from 'csv-parse';
 import fs from 'fs';
@@ -51,6 +52,10 @@ export const getSchoolById = asyncHandler(async (req, res) => {
     res.status(404);
     throw new Error('School not found');
   }
+  if (!isSameSchool(req.user, school._id)) {
+    res.status(403);
+    throw new Error('Not authorized to view this school');
+  }
   res.json(school);
 });
 
@@ -78,6 +83,10 @@ export const updateSchoolTheme = asyncHandler(async (req, res) => {
   if (!school) {
     res.status(404);
     throw new Error('School not found');
+  }
+  if (!isSameSchool(req.user, school._id)) {
+    res.status(403);
+    throw new Error('Not authorized to update this school\'s theme');
   }
   const { primaryColor, secondaryColor } = req.body;
   if (primaryColor) school.theme.primaryColor = primaryColor;

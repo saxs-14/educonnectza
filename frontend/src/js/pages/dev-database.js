@@ -1,4 +1,5 @@
 import { api } from '../api.js';
+import { escapeHtml } from '../utils.js';
 
 const collectionList = document.getElementById('collectionList');
 const currentCollectionName = document.getElementById('currentCollectionName');
@@ -52,7 +53,7 @@ async function fetchRecords(collection) {
         const records = await api.get(`/dev/db/${collection}`);
         renderRecords(records);
     } catch (err) {
-        documentGrid.innerHTML = `<div class="text-center py-20 text-rose-500"><i class="fas fa-exclamation-triangle text-3xl mb-4"></i><p>${err.message}</p></div>`;
+        documentGrid.innerHTML = `<div class="text-center py-20 text-rose-500"><i class="fas fa-exclamation-triangle text-3xl mb-4"></i><p>${escapeHtml(err.message)}</p></div>`;
     }
 }
 
@@ -67,10 +68,11 @@ function renderRecords(records) {
         const div = document.createElement('div');
         div.className = 'bg-slate-50 border border-slate-100 rounded-2xl p-4 font-mono text-[11px] overflow-x-auto';
         
-        // Pretty print JSON with custom coloring
-        let json = JSON.stringify(doc, null, 2);
-        json = json.replace(/"(\w+)":/g, '<span class="json-key">"$1"</span>:');
-        json = json.replace(/: "(.*)"/g, ': <span class="json-string">"$1"</span>');
+        // Pretty print JSON with custom coloring. Escape FIRST so any stored
+        // HTML/script in a field value renders as inert text, not markup.
+        let json = escapeHtml(JSON.stringify(doc, null, 2));
+        json = json.replace(/&quot;(\w+)&quot;:/g, '<span class="json-key">&quot;$1&quot;</span>:');
+        json = json.replace(/: &quot;(.*)&quot;/g, ': <span class="json-string">&quot;$1&quot;</span>');
         json = json.replace(/: (\d+)/g, ': <span class="json-number">$1</span>');
         
         div.innerHTML = `<pre>${json}</pre>`;
