@@ -3,57 +3,63 @@ import User from '../models/User.js';
 import School from '../models/School.js';
 import Subject from '../models/Subject.js';
 import Quiz from '../models/Quiz.js';
+import { runOrphanAudit } from '../utils/orphanCheck.js';
+
+const PENDING_SCHOOL_DEDUCTION = 5;
+const PENDING_SCHOOL_DEDUCTION_CAP = 20;
+const BAD_RATIO_DEDUCTION = 15;
+const BAD_RATIO_THRESHOLD = 40;
+const ORPHAN_DEDUCTION_PER = 2;
+const ORPHAN_DEDUCTION_CAP = 30;
 
 // @desc    Get AI System Audit
 // @route   GET /api/ai/audit
 export const getSystemAudit = asyncHandler(async (req, res) => {
-  const totalUsers = await User.countDocuments();
   const activeLearners = await User.countDocuments({ role: 'Learner', isActive: true });
   const activeTeachers = await User.countDocuments({ role: 'Teacher', isActive: true });
   const schools = await School.find();
-  const totalSchools = schools.length;
-  
-  const insights = [];
+  const pendingSchools = schools.filter((s) => !s.isActive).length;
+  const teacherRatio = activeTeachers > 0 ? activeLearners / activeTeachers : 0;
+  const { total: orphanTotal } = await runOrphanAudit();
 
-  // Logic for generating insights
-  if (totalSchools > 0) {
-    const inactiveSchools = schools.filter(s => !s.isActive).length;
-    if (inactiveSchools > 0) {
-      insights.push({
-        type: 'warning',
-        message: `${inactiveSchools} schools are currently pending approval.`,
-        action: 'Review Schools'
-      });
-    }
+  const insights = [];
+  let healthScore = 100;
+
+  if (pendingSchools > 0) {
+    insights.push({
+      type: 'warning',
+      message: `${pendingSchools} school${pendingSchools === 1 ? '' : 's'} ${pendingSchools === 1 ? 'is' : 'are'} currently pending approval.`,
+      action: 'Review Schools',
+    });
+    healthScore -= Math.min(pendingSchools * PENDING_SCHOOL_DEDUCTION, PENDING_SCHOOL_DEDUCTION_CAP);
   }
 
-  const teacherRatio = activeTeachers > 0 ? (activeLearners / activeTeachers).toFixed(1) : 'N/A';
-  if (teacherRatio > 40) {
+  if (teacherRatio > BAD_RATIO_THRESHOLD) {
     insights.push({
       type: 'critical',
-      message: `Critical teacher-to-learner ratio detected (${teacherRatio}:1). System strain predicted in Western Cape cluster.`,
-      action: 'Scale Resources'
+      message: `Critical teacher-to-learner ratio detected (${teacherRatio.toFixed(1)}:1).`,
+      action: 'Scale Resources',
     });
-  } else {
-    insights.push({
-      type: 'info',
-      message: `Healthy teacher-to-learner ratio: ${teacherRatio}:1 across all schools.`,
-      action: 'Monitor'
-    });
+    healthScore -= BAD_RATIO_DEDUCTION;
   }
 
-  // Database Health
-  const dbSizeMock = (Math.random() * 50 + 150).toFixed(1);
-  insights.push({
-    type: 'info',
-    message: `Database storage utilization is at ${dbSizeMock}MB. Growth rate stable at 4% MoM.`,
-    action: 'None'
-  });
+  if (orphanTotal > 0) {
+    insights.push({
+      type: 'warning',
+      message: `${orphanTotal} orphaned reference${orphanTotal === 1 ? '' : 's'} found across the database.`,
+      action: 'Run Deep Scan',
+    });
+    healthScore -= Math.min(orphanTotal * ORPHAN_DEDUCTION_PER, ORPHAN_DEDUCTION_CAP);
+  }
+
+  if (insights.length === 0) {
+    insights.push({ type: 'info', message: 'No other issues detected.', action: 'None' });
+  }
 
   res.json({
-    healthScore: 94,
+    healthScore: Math.max(healthScore, 0),
     lastScan: new Date(),
-    insights
+    insights,
   });
 });
 
