@@ -27,6 +27,7 @@ import micrositeRoutes from './routes/micrositeRoutes.js';
 import parentRoutes from './routes/parentRoutes.js';
 import apsRoutes from './routes/apsRoutes.js';
 import aiTutorRoutes from './routes/aiTutorRoutes.js';
+import healthRoutes from './routes/healthRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
@@ -65,6 +66,8 @@ app.use('/api/materials', materialRoutes);
 app.use('/api/forums', forumRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/dev', devRoutes);
+app.use('/health', healthRoutes);
+app.use('/api/health', healthRoutes);
 app.use('/api/v1/branding', brandingRoutes);
 app.use('/api/branding', brandingRoutes);
 app.use('/api/v1/microsites', micrositeRoutes);

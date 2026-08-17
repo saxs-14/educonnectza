@@ -1,4 +1,5 @@
 import asyncHandler from 'express-async-handler';
+import mongoose from 'mongoose';
 import SchoolBranding from '../models/SchoolBranding.js';
 import School from '../models/School.js';
 import { isSameSchool } from '../utils/authz.js';
@@ -11,22 +12,27 @@ import { verifyContrast } from '../utils/colorContrast.js';
 export const getSchoolBranding = asyncHandler(async (req, res) => {
   const { schoolId } = req.params;
 
+  const defaultBranding = {
+    schoolId,
+    logoUrl: '/assets/default-logo.png',
+    faviconUrl: '/favicon.ico',
+    bannerUrl: '/assets/default-banner.jpg',
+    primaryColor: '#1e3a8a',
+    secondaryColor: '#0d9488',
+    accentColor: '#f59e0b',
+    backgroundColor: '#f8fafc',
+    textColor: '#0f172a',
+    motto: 'Excellence in Education',
+    isContrastAccessible: true,
+  };
+
+  if (!mongoose.Types.ObjectId.isValid(schoolId)) {
+    return res.json({ success: true, branding: defaultBranding });
+  }
+
   let branding = await SchoolBranding.findOne({ schoolId });
   if (!branding) {
-    // Return default branding if not explicitly customized yet
-    branding = {
-      schoolId,
-      logoUrl: '/assets/default-logo.png',
-      faviconUrl: '/favicon.ico',
-      bannerUrl: '/assets/default-banner.jpg',
-      primaryColor: '#1e3a8a',
-      secondaryColor: '#0d9488',
-      accentColor: '#f59e0b',
-      backgroundColor: '#f8fafc',
-      textColor: '#0f172a',
-      motto: 'Excellence in Education',
-      isContrastAccessible: true,
-    };
+    branding = defaultBranding;
   }
 
   res.json({ success: true, branding });

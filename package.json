@@ -9,7 +9,9 @@
     "typecheck": "npm run typecheck --prefix backend --if-present && npm run typecheck --prefix frontend --if-present"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "@vitejs/plugin-react": "^4.7.0",
+    "concurrently": "^8.2.2",
+    "vite": "^6.4.3"
   },
   "dependencies": {
     "dotenv": "^16.6.1",

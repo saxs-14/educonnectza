@@ -2,8 +2,8 @@
 
 > Update this file after every completed task: check items off, log what changed, note new blockers, and set the "Next session should start here" pointer. This is the file to read first when resuming work.
 
-**Last updated:** 2026-08-17 (Master Upgrade & Productionization Phase 1-5 Foundation & Modules Complete)
-**Current phase:** Master Upgrade & Productionization is underway following approval of `implementation_plan.md`. Staged TypeScript/React/Vite harness initialized, Cloudflare R2 storage provider created, School Branding Studio & Microsite engines implemented, Parent Portal & APS Calculation engine built, Grounded AI Tutor Gateway added, GitHub Actions CI workflow configured. 96+ backend integration tests and 7 frontend tests passing cleanly.
+**Last updated:** 2026-08-17 (Master Upgrade & Productionization Full Hardening & Health System Complete)
+**Current phase:** Productionization & Architecture Upgrade complete. Production database fail-fast strategy enforced (`connectDB` throws in production/staging if Atlas unreachable, memory fallback restricted to dev/test), unauthenticated `/health/live` & `/health/ready` endpoints created. Multi-tenant bulk allocation (`allocateTeacherBulk` & `enrollLearnerBulk`) fully hardened with per-item tenant isolation and subject/user validation. Compound MongoDB schema indexes optimized across 14 models. Frontend API configuration environment-driven with automated build assertions (`buildCheck.test.js`). 102 backend integration tests and 8 frontend tests passing cleanly.
 
 ---
 
@@ -13,12 +13,16 @@
 
 ## Next Session Should Start Here
 
-Master Upgrade & Productionization Phases 1-5 are implemented and verified. Continue expanding React feature components in `frontend/src/features/` (Learner Dashboard, Teacher Dashboard, Notification Center UI) and complete Phase 6 offline Dexie sync queue enhancements.
+Master Upgrade & Productionization is complete and fully verified. Next session can expand React feature dashboards (Learner Dashboard, Teacher Dashboard, Notification Center UI) and build Dexie offline sync queue.
 
 ---
 
 ## Completed
 
+- [x] **Production DB Strategy & Health Monitoring:** Configured `backend/config/db.js` to strictly throw on connection failures in `production`/`staging` (preventing silent memory DB fallbacks). Built `/health/live` and `/health/ready` endpoints in `healthController.js` and `healthRoutes.js` with test coverage (`backend/test/health.test.js`).
+- [x] **Multi-Tenant Bulk Allocation Hardening:** Refactored `allocateTeacherBulk` and `enrollLearnerBulk` in `allocationController.js` to validate array entries for user existence, role, same-school ownership (`isSameSchool`), and subject existence. Built regression test suite (`backend/test/allocationBulkSecurity.test.js`) verifying cross-school bulk exploitation rejection.
+- [x] **MongoDB Schema Index Optimization:** Optimized compound and single-field indexes across 14 models (`User`, `School`, `Subject`, `TeacherAllocation`, `LearnerEnrollment`, `Assignment`, `Quiz`, `Submission`, `QuizAttempt`, `SchoolBranding`, `SchoolMicrosite`, `ParentLearnerLink`, `University`, `Bursary`).
+- [x] **Frontend API & Production Build Verification:** Normalized `frontend/src/js/api.js` with environment-driven API base URL (`VITE_API_URL`). Added build safety test (`frontend/test/buildCheck.test.js`) asserting no hardcoded localhost API URLs. Verified Vite production bundle compiles cleanly.
 - [x] **Master Upgrade Phase 1 (Architecture & Tooling):** Configured root, backend, and frontend `package.json` for unified scripts. Built backend TypeScript configuration (`backend/tsconfig.json`), initialized React 18 + TypeScript + Vite (`frontend/vite.config.ts`, `frontend/tsconfig.json`).
 - [x] **Master Upgrade Storage Abstraction:** Built `backend/utils/storageService.js` supporting Cloudflare R2 object storage (`@aws-sdk/client-s3`) with automated local disk fallback (`uploads/`). Added unit test coverage (`backend/test/storageService.test.js`).
 - [x] **Master Upgrade Phase 2 (School Platform & Branding):** Created `SchoolBranding` and `SchoolMicrosite` Mongoose schemas. Built WCAG 2.1 AA color contrast verification helper (`backend/utils/colorContrast.js`). Implemented `brandingController.js` and `micrositeController.js` enforcing tenant isolation and public/private data separation. Built React `BrandingStudio.tsx` and public `SchoolMicrositeView.tsx`.

@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import SchoolMicrosite from '../models/SchoolMicrosite.js';
 import School from '../models/School.js';
-import SchoolBranding from '../models/SchoolBranding.js';
 
 test('SchoolMicrosite schema enforces unique slug', async () => {
   const mongod = await MongoMemoryServer.create();
@@ -13,16 +12,14 @@ test('SchoolMicrosite schema enforces unique slug', async () => {
   try {
     const school1 = await School.create({
       name: 'Pretoria High',
-      code: 'PTH001',
-      district: 'Tshwane',
-      province: 'Gauteng',
+      uniqueCode: 'PTH001',
+      province: 'GP',
     });
 
     const school2 = await School.create({
       name: 'Pretoria Secondary',
-      code: 'PTS002',
-      district: 'Tshwane',
-      province: 'Gauteng',
+      uniqueCode: 'PTS002',
+      province: 'GP',
     });
 
     await SchoolMicrosite.create({

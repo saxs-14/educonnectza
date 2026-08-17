@@ -5,9 +5,9 @@
   "scripts": {
     "start": "npx live-server . --port=3000 --no-browser",
     "dev": "vite",
-    "build": "vite build",
+    "build": "npx vite build",
     "preview": "vite preview",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "npx tsc --noEmit",
     "test": "node --test"
   },
   "dependencies": {
@@ -22,12 +22,12 @@
     "serve": "^14.2.4"
   },
   "devDependencies": {
-    "@types/node": "^22.13.4",
-    "@types/react": "^18.3.18",
-    "@types/react-dom": "^18.3.5",
-    "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "^5.7.3",
-    "vite": "^6.1.0",
+    "@types/node": "^22.20.1",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.7.0",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.3",
     "vite-plugin-pwa": "^0.21.1"
   }
 }
