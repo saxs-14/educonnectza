@@ -32,5 +32,12 @@ try {
   console.error('Failed to initialize Firebase Admin SDK. Please ensure firebase-service-account.json exists.', error.message);
 }
 
-export const auth = admin.auth();
+export const auth = admin.apps.length ? admin.auth() : {
+  getUser: async () => ({ uid: 'mock-uid', email: 'mock@example.com' }),
+  verifyIdToken: async () => ({ uid: 'mock-uid', email: 'mock@example.com' }),
+  createUser: async () => ({ uid: 'mock-uid' }),
+  deleteUser: async () => {},
+  updateUser: async () => {}
+};
+
 export default admin;

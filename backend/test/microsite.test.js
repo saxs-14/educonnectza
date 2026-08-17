@@ -10,6 +10,8 @@ test('SchoolMicrosite schema enforces unique slug', async () => {
   await mongoose.connect(mongod.getUri());
 
   try {
+    await SchoolMicrosite.init();
+
     const school1 = await School.create({
       name: 'Pretoria High',
       uniqueCode: 'PTH001',
