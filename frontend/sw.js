@@ -2,6 +2,7 @@ const CACHE_NAME = 'educonnect-v3';
 const urlsToCache = [
   '/',
   '/index.html',
+  '/login.html',
   '/signup.html',
   '/forgot-password.html',
   '/reset-password.html',
