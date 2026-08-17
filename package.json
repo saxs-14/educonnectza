@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm start --prefix backend\" \"npm start --prefix frontend\""
+    "dev": "concurrently \"npm start --prefix backend\" \"npm start --prefix frontend\"",
+    "test": "npm test --prefix backend && npm test --prefix frontend",
+    "build": "npm run build --prefix backend --if-present && npm run build --prefix frontend --if-present",
+    "typecheck": "npm run typecheck --prefix backend --if-present && npm run typecheck --prefix frontend --if-present"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

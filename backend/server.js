@@ -22,6 +22,11 @@ import materialRoutes from './routes/materialRoutes.js';
 import forumRoutes from './routes/forumRoutes.js';
 import aiRoutes from './routes/aiRoutes.js';
 import devRoutes from './routes/devRoutes.js';
+import brandingRoutes from './routes/brandingRoutes.js';
+import micrositeRoutes from './routes/micrositeRoutes.js';
+import parentRoutes from './routes/parentRoutes.js';
+import apsRoutes from './routes/apsRoutes.js';
+import aiTutorRoutes from './routes/aiTutorRoutes.js';
 
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
@@ -60,6 +65,13 @@ app.use('/api/materials', materialRoutes);
 app.use('/api/forums', forumRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/dev', devRoutes);
+app.use('/api/v1/branding', brandingRoutes);
+app.use('/api/branding', brandingRoutes);
+app.use('/api/v1/microsites', micrositeRoutes);
+app.use('/api/microsites', micrositeRoutes);
+app.use('/api/v1/parent', parentRoutes);
+app.use('/api/v1/aps', apsRoutes);
+app.use('/api/v1/ai-tutor', aiTutorRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

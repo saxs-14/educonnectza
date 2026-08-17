@@ -1,0 +1,49 @@
+name: EduConnectZA CI Pipeline
+
+on:
+  push:
+    branches: [ master, main, new-update ]
+  pull_request:
+    branches: [ master, main, new-update ]
+
+jobs:
+  test-and-verify:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install Root Dependencies
+        run: npm ci --if-present || npm install
+
+      - name: Install Backend Dependencies
+        run: npm install --prefix backend
+
+      - name: Install Frontend Dependencies
+        run: npm install --prefix frontend
+
+      - name: Backend Typecheck
+        run: npm run typecheck --prefix backend --if-present
+
+      - name: Frontend Typecheck
+        run: npm run typecheck --prefix frontend --if-present
+
+      - name: Run Backend Integration Tests
+        run: npm test --prefix backend
+
+      - name: Run Frontend Tests
+        run: npm test --prefix frontend
+
+      - name: Verify Frontend Production Build
+        run: npm run build --prefix frontend --if-present

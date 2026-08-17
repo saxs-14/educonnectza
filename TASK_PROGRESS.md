@@ -2,8 +2,8 @@
 
 > Update this file after every completed task: check items off, log what changed, note new blockers, and set the "Next session should start here" pointer. This is the file to read first when resuming work.
 
-**Last updated:** 2026-08-04 (Horizon 2 item 1 — real AI Insights — shipped, reviewed, merged, pushed)
-**Current phase:** Horizon 1 and Horizon 2 item 1 are both done. Built via full brainstorming → design spec → implementation plan → subagent-driven development (5 tasks, each with an independent implementer + task-scoped reviewer) → whole-branch review → fix round → re-review cycle (see `docs/superpowers/specs/2026-08-04-ai-insights-design.md` and `docs/superpowers/plans/2026-08-04-ai-insights.md`). The whole-branch review caught a real cross-task bug (a fragile label-parsing contract between two tasks) that no single task's review could have seen — now fixed. `new-update` merged into `master` locally (fast-forward, tests reverified post-merge) and **pushed to `origin/new-update`** (now at `e518105`). `master` has no remote counterpart in this repo (`origin` only has `new-update`) — the merge is local-only unless/until asked to push it too. 90 backend + 7 frontend = 97 automated tests passing; `firestore.rules`/`storage.rules` are still hand-reviewed only (no Firebase emulator available).
+**Last updated:** 2026-08-17 (Master Upgrade & Productionization Phase 1-5 Foundation & Modules Complete)
+**Current phase:** Master Upgrade & Productionization is underway following approval of `implementation_plan.md`. Staged TypeScript/React/Vite harness initialized, Cloudflare R2 storage provider created, School Branding Studio & Microsite engines implemented, Parent Portal & APS Calculation engine built, Grounded AI Tutor Gateway added, GitHub Actions CI workflow configured. 96+ backend integration tests and 7 frontend tests passing cleanly.
 
 ---
 
@@ -13,11 +13,19 @@
 
 ## Next Session Should Start Here
 
-Both Horizon 1 and Horizon 2 item 1 are done, merged, and pushed. Pick up with item 2 of `PROJECT_PLAN.md` §5's Horizon 2 table (Parent Dashboard, Study Planner, APS Calculator, or Notification Center — no priority order set yet among them; ask the project owner which one). One open question from this session, not yet answered: whether `master` should also be pushed to `origin` (it doesn't exist there today — would be a new remote branch, not just an update).
+Master Upgrade & Productionization Phases 1-5 are implemented and verified. Continue expanding React feature components in `frontend/src/features/` (Learner Dashboard, Teacher Dashboard, Notification Center UI) and complete Phase 6 offline Dexie sync queue enhancements.
 
 ---
 
 ## Completed
+
+- [x] **Master Upgrade Phase 1 (Architecture & Tooling):** Configured root, backend, and frontend `package.json` for unified scripts. Built backend TypeScript configuration (`backend/tsconfig.json`), initialized React 18 + TypeScript + Vite (`frontend/vite.config.ts`, `frontend/tsconfig.json`).
+- [x] **Master Upgrade Storage Abstraction:** Built `backend/utils/storageService.js` supporting Cloudflare R2 object storage (`@aws-sdk/client-s3`) with automated local disk fallback (`uploads/`). Added unit test coverage (`backend/test/storageService.test.js`).
+- [x] **Master Upgrade Phase 2 (School Platform & Branding):** Created `SchoolBranding` and `SchoolMicrosite` Mongoose schemas. Built WCAG 2.1 AA color contrast verification helper (`backend/utils/colorContrast.js`). Implemented `brandingController.js` and `micrositeController.js` enforcing tenant isolation and public/private data separation. Built React `BrandingStudio.tsx` and public `SchoolMicrositeView.tsx`.
+- [x] **Master Upgrade Phase 3 (Learner Success & Parent Portal):** Built `ParentLearnerLink` model with POPIA consent tracking. Created `parentController.js` for read-only learner academic progress inspection.
+- [x] **Master Upgrade Phase 4 (SA Intelligence & APS Engine):** Built deterministic South African APS calculation engine (`backend/utils/apsEngine.js`) supporting standard NSC 7-point scale (excluding Life Orientation) and institution-specific scoring. Built `University` and `Bursary` Mongoose models and `apsController.js`. Created interactive React `ApsCalculatorView.tsx`.
+- [x] **Master Upgrade Phase 5 (Grounded AI Tutor):** Created `AIGatewayService` supporting Google Gemini, OpenAI-compatible APIs, and grounded rule-based educational scaffolding. Implemented `aiTutorController.js` and React `AiTutorWidget.tsx`.
+- [x] **GitHub Actions CI/CD Pipeline:** Configured `.github/workflows/ci.yml` for automated typechecking, backend/frontend test execution, and production build verification on push/PR.
 
 - [x] Located and entered `Documents/Projects/educonnectza`.
 - [x] **Pass 1 recon:** root config, both `package.json` manifests, `server.js`, `db.js`, `firebase.js` (admin), auth flow (frontend `auth.js`/`firebase.js` + backend `authController.js`/`authMiddleware.js`), Firestore/Storage/RTDB security rules, Data Connect scaffold contents, all 14 backend route files' endpoint inventory, `devController.js`, `aiController.js`, `User.js` model, PWA manifest + service worker, presence/absence of tests and CI.
