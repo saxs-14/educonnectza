@@ -90,32 +90,32 @@ export const BrandingStudio: React.FC<BrandingStudioProps> = ({
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Primary Brand Color</label>
-            <input type="color" value={primaryColor} onChange={(e) => setPrimaryColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
+            <input type="color" value={primaryColor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPrimaryColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Secondary Color</label>
-            <input type="color" value={secondaryColor} onChange={(e) => setSecondaryColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
+            <input type="color" value={secondaryColor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSecondaryColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Accent Color</label>
-            <input type="color" value={accentColor} onChange={(e) => setAccentColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
+            <input type="color" value={accentColor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setAccentColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Background Color</label>
-            <input type="color" value={bgColor} onChange={(e) => setBgColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
+            <input type="color" value={bgColor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setBgColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>Text Color</label>
-            <input type="color" value={textColor} onChange={(e) => setTextColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
+            <input type="color" value={textColor} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTextColor(e.target.value)} style={{ width: '100%', height: '40px' }} />
           </div>
 
           <div style={{ marginBottom: '16px' }}>
             <label style={{ display: 'block', fontWeight: 600, marginBottom: '6px' }}>School Motto</label>
-            <input type="text" value={motto} onChange={(e) => setMotto(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
+            <input type="text" value={motto} onChange={(e: React.ChangeEvent<HTMLInputElement>) => setMotto(e.target.value)} style={{ width: '100%', padding: '10px', borderRadius: '6px', border: '1px solid #cbd5e1' }} />
           </div>
 
           <button className="btn-primary" onClick={handleSave} style={{ width: '100%', marginTop: '12px' }}>
