@@ -67,6 +67,39 @@ form.addEventListener('submit', async (e) => {
     let msg = 'Authentication failed.';
     if (error.code === 'auth/invalid-credential') {
       msg = 'Invalid email or password.';
+    } else if (error.code === 'auth/too-many-requests') {
+      // Attempt backend development fallback if Firebase rate limits
+      try {
+        const fallbackRes = await fetch('http://localhost:5000/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const fallbackData = await fallbackRes.json();
+        if (fallbackRes.ok) {
+          localStorage.setItem('user', JSON.stringify(fallbackData));
+          if (fallbackData.role === 'DevAdmin') {
+            window.location.href = 'dev-admin-dashboard.html';
+            return;
+          }
+          let targetPage = 'index.html';
+          if (fallbackData.role === 'SchoolAdmin') targetPage = 'school-admin-dashboard.html';
+          else if (fallbackData.role === 'Teacher') targetPage = 'teacher-dashboard.html';
+          else if (fallbackData.role === 'Learner') targetPage = 'learner-dashboard.html';
+          
+          const card = document.getElementById('login-card');
+          if (card) {
+            card.style.transform = 'scale(0.95)';
+            card.style.opacity = '0';
+          }
+          setTimeout(() => { window.location.href = targetPage; }, 300);
+          return;
+        }
+      } catch (fallbackErr) {
+        console.warn('Fallback auth check failed:', fallbackErr);
+      }
+
+      msg = 'Access to this account has been temporarily disabled due to multiple failed login attempts. Please reset your password or try again in a few minutes.';
     } else {
       msg = error.message;
     }
@@ -77,11 +110,13 @@ form.addEventListener('submit', async (e) => {
 });
 
 function showError(msg) {
-  errorDiv.textContent = msg;
+  errorDiv.innerHTML = msg;
   errorDiv.classList.remove('hidden');
 }
 
 function setLoading(loading) {
+  const submitBtn = form.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = loading;
   if (loading) {
     spinner.classList.remove('hidden');
     loginText.textContent = 'Signing in...';

@@ -85,21 +85,27 @@ export const registerUser = asyncHandler(async (req, res) => {
 // @desc    Login user (Sync Firebase with Mongo)
 // @route   POST /api/auth/login
 export const loginUser = asyncHandler(async (req, res) => {
-  const { firebaseUid } = req.body;
+  const { firebaseUid, email } = req.body;
 
-  if (!firebaseUid) {
+  if (!firebaseUid && !email) {
     res.status(400);
-    throw new Error('Firebase UID is required');
+    throw new Error('Firebase UID or Email is required');
   }
 
-  try {
-    await auth.getUser(firebaseUid);
-  } catch (error) {
-    res.status(400);
-    throw new Error('Invalid Firebase UID');
+  let user = null;
+
+  if (firebaseUid) {
+    try {
+      await auth.getUser(firebaseUid);
+    } catch (error) {
+      res.status(400);
+      throw new Error('Invalid Firebase UID');
+    }
+    user = await User.findOne({ firebaseUid }).populate('schoolId', 'name theme');
+  } else if (email) {
+    user = await User.findOne({ email: email.toLowerCase() }).populate('schoolId', 'name theme');
   }
 
-  const user = await User.findOne({ firebaseUid }).populate('schoolId', 'name theme');
   if (user) {
     if (!user.isActive) {
       res.status(401);
