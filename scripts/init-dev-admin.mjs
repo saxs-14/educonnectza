@@ -4,6 +4,9 @@ import { getFirestore, doc, setDoc } from "firebase/firestore";
 import dotenv from "dotenv";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import mongoose from "../backend/node_modules/mongoose/index.js";
+import connectDB from "../backend/config/db.js";
+import User from "../backend/models/User.js";
 
 // Reuse backend/.env so this doesn't need its own env file.
 dotenv.config({ path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../backend/.env") });
@@ -43,8 +46,26 @@ async function initDevAdmin() {
       name: "Dev Admin",
       createdAt: new Date().toISOString()
     });
-    
     console.log("Successfully initialized devAdmin in Firestore!");
+
+    console.log("Syncing devAdmin profile to MongoDB...");
+    await connectDB();
+    await User.findOneAndUpdate(
+      { firebaseUid: user.uid },
+      {
+        firebaseUid: user.uid,
+        email: user.email,
+        role: "DevAdmin",
+        fullNames: "Dev",
+        surname: "Admin",
+        userCode: "DEV-001",
+        isActive: true,
+      },
+      { upsert: true, new: true }
+    );
+    console.log("Successfully initialized devAdmin in MongoDB!");
+
+    await mongoose.disconnect();
     process.exit(0);
   } catch (error) {
     console.error("Error setting devAdmin:", error);
@@ -53,3 +74,4 @@ async function initDevAdmin() {
 }
 
 initDevAdmin();
+

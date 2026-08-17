@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import User from '../models/User.js';
 
 /**
  * Connect to MongoDB using URI defined in `.env`.
@@ -33,7 +34,7 @@ const connectDB = async () => {
   try {
     const conn = await mongoose.connect(mongoUri, {
       dbName: 'educonnectza',
-      serverSelectionTimeoutMS: isStrictProductionEnv ? 10000 : 3000,
+      serverSelectionTimeoutMS: isStrictProductionEnv ? 10000 : 1500,
     });
     console.log(`[DB] MongoDB Connected: ${conn.connection.host}`);
   } catch (error) {
@@ -45,6 +46,7 @@ const connectDB = async () => {
 
     console.warn(`[DB DEV] Remote MongoDB connection failed (${error.message}). Starting ephemeral in-memory database...`);
     try {
+      await mongoose.disconnect();
       const { MongoMemoryServer } = await import('mongodb-memory-server');
       const mongod = await MongoMemoryServer.create();
       const memoryUri = mongod.getUri();
@@ -55,6 +57,31 @@ const connectDB = async () => {
       mongoose.set('bufferCommands', false);
     }
   }
+
+  // Auto-seed DevAdmin in non-production environments to guarantee seamless login
+  if (!isStrictProductionEnv) {
+    try {
+      const devAdminEmail = process.env.DEV_ADMIN_EMAIL || 'mamagauphathu@gmail.com';
+      const devAdminUid = '0fobIxycMpTRHxbwRRex7NEyw8q1';
+      await User.findOneAndUpdate(
+        { firebaseUid: devAdminUid },
+        {
+          firebaseUid: devAdminUid,
+          email: devAdminEmail,
+          role: 'DevAdmin',
+          fullNames: 'Dev',
+          surname: 'Admin',
+          userCode: 'DEV-001',
+          isActive: true,
+        },
+        { upsert: true, new: true }
+      );
+      console.log(`[DB DEV] DevAdmin profile synced for ${devAdminEmail}`);
+    } catch (seedErr) {
+      console.warn(`[DB DEV] DevAdmin auto-seed warning: ${seedErr.message}`);
+    }
+  }
 };
 
 export default connectDB;
+
